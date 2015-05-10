@@ -38,8 +38,8 @@
 
 - name: Health check is present
   template:
-    src: curl.json.j2
-    dest: /etc/consul.d/curl-books-fe.json
+    src: consul_service.json.j2
+    dest: /etc/consul.d/service-books-fe.json
   register: health_result
   tags: [books-fe]
 

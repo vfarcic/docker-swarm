@@ -2,3 +2,11 @@ directories:
   - /etc/consul.d
   - /data/consul
   - /data/consul/logs
+  - /data/consul/scripts
+
+files: [
+  { src: "consul", dest: "/usr/local/bin/consul", mode: "0755" },
+  { src: "ui", dest: "/data/consul", mode: "0744" },
+  { src: "mem.sh", dest: "/data/consul/scripts/mem.sh", mode: "0744" },
+  { src: "disk.sh", dest: "/data/consul/scripts/disk.sh", mode: "0744" }
+]

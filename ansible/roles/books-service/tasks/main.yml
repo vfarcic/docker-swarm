@@ -37,11 +37,12 @@
     value: "{{ container_port }}"
   tags: [books-service]
 
-- name: Health check is present
+- name: Consul configs are present
   template:
-    src: curl.json.j2
-    dest: /etc/consul.d/curl-books-service.json
+    src: consul_service.json.j2
+    dest: /etc/consul.d/service-books-service.json
   register: health_result
+  with_items: consul_configs
   tags: [books-service]
 
 - name: Consul is restarted
@@ -80,7 +81,7 @@
 #  tags: [books-service]
 
 - name: nginx config files are present
-  template: src=books-service.conf.j2 dest=/data/nginx/includes/books-service.conf
+  template: src=nginx.conf.j2 dest=/data/nginx/includes/books-service.conf
   register: nginx_result
   tags: [books-service]
 

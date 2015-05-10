@@ -1,10 +1,3 @@
-- name: Executable is present
-  copy:
-    src: consul
-    dest: /usr/local/bin/consul
-    mode: 0755
-  tags: [consul]
-
 - name: Directories are present
   file:
     dest: "{{ item }}"
@@ -12,17 +5,19 @@
   with_items: directories
   tags: [consul]
 
+- name: Files are copied
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items: files
+  tags: [consul]
+
 - name: Upstart script is present
   template:
     src: consul.conf.j2
     dest: /etc/init/consul.conf
     mode: 0644
-  tags: [consul]
-
-- name: UI is copied
-  copy:
-    src: ui
-    dest: /data/consul
   tags: [consul]
 
 - name: Service is started
@@ -39,11 +34,10 @@
 
 - name: Configurations are present
   template:
-    src: ping.json.j2
-    dest: /etc/consul.d/ping-{{ item }}.json
+    src: consul_check.json.j2
+    dest: /etc/consul.d/consul_check.json
   register: result
   with_items: consul_nodes
-  when: consul_nodes is defined
   tags: [consul]
 
 - name: Consul is restarted

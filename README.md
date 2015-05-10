@@ -96,3 +96,4 @@ TODO
 
 * Blue/green
 * Consul container
+* Add loadabg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
