@@ -9,8 +9,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "virtualbox" do |v|
     v.memory = 1024
   end
+  config.vm.provision :shell, path: "bootstrap.sh"
   config.vm.provision :hosts
-  config.vm.provision "docker", images: ["swarm"]
   (1..3).each do |i|
     config.vm.define "swarm-node-0#{i}" do |node|
       node.vm.hostname = "swarm-node-0#{i}"
@@ -19,6 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   config.vm.define "swarm-master" do |node|
     node.vm.hostname = "swarm-master"
+    node.vm.provision :shell, path: "bootstrap_ansible.sh"
     node.vm.network "private_network", ip: "10.100.199.200"
     node.vm.network "forwarded_port", guest: 2376, host: 2376
     node.vm.network "forwarded_port", guest: 2375, host: 2375

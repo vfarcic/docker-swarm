@@ -1,0 +1,32 @@
+- name: Executable is present
+  copy:
+    src: consul
+    dest: /usr/local/bin/consul
+    mode: 0755
+  tags: [consul]
+
+- name: Directories are present
+  file:
+    dest: "{{ item }}"
+    state: directory
+  with_items: directories
+  tags: [consul]
+
+- name: Upstart script is present
+  template:
+    src: consul.conf.j2
+    dest: /etc/init/consul.conf
+    mode: 0644
+  tags: [consul]
+
+- name: Service is started
+  service:
+    name=consul
+    state=started
+    pattern=/usr/local/bin/consul
+  tags: [consul]
+
+- name: Node is in cluster
+  shell: consul join {{ consul_master_ip }}
+  when: consul_master_ip is defined
+  tags: [consul]

@@ -1,0 +1,73 @@
+#- name: Container is running
+#  shell: >
+#    docker -H tcp://0.0.0.0:2375 run -d \
+#      --name books-service \
+#      -p 9001:8080 \
+#      -v /data/books-service/db:/data/db \
+#      vfarcic/books-service
+#      docker -H tcp://0.0.0.0:2375 ps -a
+#  tags: [books-service]
+
+- name: IP is retrieved
+  shell: /data/scripts/swarm_get_ip.sh books-service
+  register: container_ip
+  tags: [books-service]
+
+- name: Set IP
+  set_fact:
+    container_ip={{ container_ip.stdout }}
+  tags: [books-service]
+
+- name: IP is put to Consul
+  consul_kv:
+    action: put
+    key: books-service/ip
+    value: "{{ container_ip }}"
+  tags: [books-service]
+
+- name: Port is put to Consul
+  consul_kv:
+    action: put
+    key: books-service/port
+    value: "9001"
+  tags: [books-service]
+
+#- name: IP is retrieved from Consul
+#  consul_kv:
+#    action: get
+#    key: books-service/ip
+#  register: container_ip
+#  tags: [books-service]
+#
+#- name: Set port
+#  set_fact:
+#    container_ip={{ container_ip.value.0.Value }}
+#  tags: [books-service]
+#
+#- debug: var=container_ip
+#  tags: [books-service]
+
+#- name: Port is retrieved from Consul
+#  consul_kv:
+#    action: get
+#    key: books-service/port
+#  register: container_port
+#  tags: [books-service]
+#
+#- name: Set port
+#  set_fact:
+#    container_port={{ container_port.value.0.Value }}
+#  tags: [books-service]
+#
+#- debug: var=container_port
+#  tags: [books-service]
+
+- name: nginx config files are present
+  template: src=books-service.conf.j2 dest=/data/nginx/includes/books-service.conf
+  register: nginx_result
+  tags: [books-service]
+
+- name: nginx container is restarted
+  shell: docker kill -s HUP nginx
+  when: nginx_result|changed
+  tags: [books-service]

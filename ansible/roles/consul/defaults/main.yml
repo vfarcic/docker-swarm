@@ -1,0 +1,3 @@
+directories:
+  - /etc/consul.d
+  - /tmp/consul

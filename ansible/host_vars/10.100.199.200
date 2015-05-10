@@ -1,0 +1,4 @@
+hostname: swarm-master
+ip: 10.100.199.200
+consul_extra: -server -bootstrap-expect 1
+swarm_master: true

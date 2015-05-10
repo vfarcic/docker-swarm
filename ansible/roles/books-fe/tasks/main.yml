@@ -1,0 +1,42 @@
+- name: Container is running
+  shell: >
+    docker -H tcp://0.0.0.0:2375 run -d \
+      --name books-fe \
+      -p 9000:8080 \
+      vfarcic/books-fe
+      docker -H tcp://0.0.0.0:2375 ps -a
+  tags: [books-fe]
+
+- name: IP is retrieved
+  shell: /data/scripts/swarm_get_ip.sh books-fe
+  register: container_ip
+  tags: [books-fe]
+
+- name: Set IP
+  set_fact:
+    container_ip={{ container_ip.stdout }}
+  tags: [books-fe]
+
+- name: IP is put to Consul
+  consul_kv:
+    action: put
+    key: books-fe/ip
+    value: "{{ container_ip }}"
+  tags: [books-fe]
+
+- name: Port is put to Consul
+  consul_kv:
+    action: put
+    key: books-fe/port
+    value: "9000"
+  tags: [books-fe]
+
+- name: nginx config files are present
+  template: src=books-fe.conf.j2 dest=/data/nginx/includes/books-fe.conf
+  register: nginx_result
+  tags: [books-fe]
+
+- name: nginx container is restarted
+  shell: docker kill -s HUP nginx
+  when: nginx_result|changed
+  tags: [books-fe]
