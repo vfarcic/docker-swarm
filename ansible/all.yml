@@ -1,2 +1,4 @@
 - include: consul.yml
 - include: swarm.yml
+- include: books-service.yml
+- include: books-fe.yml

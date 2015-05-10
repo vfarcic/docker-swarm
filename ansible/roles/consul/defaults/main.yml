@@ -1,3 +1,4 @@
 directories:
   - /etc/consul.d
-  - /tmp/consul
+  - /data/consul
+  - /data/consul/logs

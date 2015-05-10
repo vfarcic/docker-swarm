@@ -72,13 +72,27 @@ curl http://10.100.199.200/api/v1/books | python -mjson.tool
 
 # Run Books Front-End
 ansible-playbook /vagrant/ansible/books-fe.yml -i /vagrant/ansible/hosts/prod
+docker -H tcp://0.0.0.0:2375 ps -a
 curl http://10.100.199.202:9000
 curl http://10.100.199.200
+
+# Check Consul
+curl http://localhost:8500/v1/health/state/critical
+curl http://localhost:8500/v1/health/state/warning
+docker -H tcp://0.0.0.0:2375 stop books-service
+curl http://localhost:8500/v1/health/state/critical
+# Switch to automatic failover
+docker -H tcp://0.0.0.0:2375 start books-service
+curl http://localhost:8500/v1/health/state/critical
+docker -H tcp://0.0.0.0:2375 stop books-fe
+curl http://localhost:8500/v1/health/state/critical
+# Switch to automatic failover
+docker -H tcp://0.0.0.0:2375 start books-fe
+curl http://localhost:8500/v1/health/state/critical
 ```
 
 TODO
 ====
 
 * Blue/green
-* books-fe
-* Expose ports to swarm-master vagrant
+* Consul container

@@ -18,6 +18,11 @@
     container_ip={{ container_ip.stdout }}
   tags: [books-service]
 
+- name: Set port
+  set_fact:
+    container_port="9001"
+  tags: [books-service]
+
 - name: IP is put to Consul
   consul_kv:
     action: put
@@ -29,7 +34,19 @@
   consul_kv:
     action: put
     key: books-service/port
-    value: "9001"
+    value: "{{ container_port }}"
+  tags: [books-service]
+
+- name: Health check is present
+  template:
+    src: curl.json.j2
+    dest: /etc/consul.d/curl-books-service.json
+  register: health_result
+  tags: [books-service]
+
+- name: Consul is restarted
+  shell: killall -HUP consul
+  when: health_result|changed
   tags: [books-service]
 
 #- name: IP is retrieved from Consul
@@ -39,7 +56,7 @@
 #  register: container_ip
 #  tags: [books-service]
 #
-#- name: Set port
+#- name: Set IP
 #  set_fact:
 #    container_ip={{ container_ip.value.0.Value }}
 #  tags: [books-service]

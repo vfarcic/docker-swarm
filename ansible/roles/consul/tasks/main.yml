@@ -19,6 +19,12 @@
     mode: 0644
   tags: [consul]
 
+- name: UI is copied
+  copy:
+    src: ui
+    dest: /data/consul
+  tags: [consul]
+
 - name: Service is started
   service:
     name=consul
@@ -29,4 +35,18 @@
 - name: Node is in cluster
   shell: consul join {{ consul_master_ip }}
   when: consul_master_ip is defined
+  tags: [consul]
+
+- name: Configurations are present
+  template:
+    src: ping.json.j2
+    dest: /etc/consul.d/ping-{{ item }}.json
+  register: result
+  with_items: consul_nodes
+  when: consul_nodes is defined
+  tags: [consul]
+
+- name: Consul is restarted
+  shell: killall -HUP consul
+  when: result|changed
   tags: [consul]

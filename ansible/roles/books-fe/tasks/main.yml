@@ -24,11 +24,28 @@
     value: "{{ container_ip }}"
   tags: [books-fe]
 
+- name: Set Port
+  set_fact:
+    container_port="9000"
+  tags: [books-fe]
+
 - name: Port is put to Consul
   consul_kv:
     action: put
     key: books-fe/port
-    value: "9000"
+    value: "{{ container_port }}"
+  tags: [books-fe]
+
+- name: Health check is present
+  template:
+    src: curl.json.j2
+    dest: /etc/consul.d/curl-books-fe.json
+  register: health_result
+  tags: [books-fe]
+
+- name: Consul is restarted
+  shell: killall -HUP consul
+  when: health_result|changed
   tags: [books-fe]
 
 - name: nginx config files are present
