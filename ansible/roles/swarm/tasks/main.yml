@@ -1,16 +1,20 @@
-#- name: Directory is present
-#  file:
-#    dest: /data/scripts
-#    state: directory
-#  tags: [swarm]
-#
-#- name: Script is present
-#  copy:
-#    src: swarm_get_ip.sh
-#    dest: /data/scripts/swarm_get_ip.sh
-#    mode: 0744
-#  tags: [swarm]
-#
+- name: Directories are present
+  file:
+    dest: "{{ item }}"
+    state: directory
+  with_items: master_directories
+  when: swarm_master is defined
+  tags: [swarm]
+
+- name: Scripts are present
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0744
+  with_items: master_scripts
+  when: swarm_master is defined
+  tags: [swarm]
+
 - name: Obsolete Docker init.d service is removed
   file:
     dest: /etc/init.d/docker
@@ -49,28 +53,21 @@
   when: swarm_master is defined
   tags: [swarm]
 
-- name: Compose directory is present
-  file:
-    dest: /data/compose
-    state: directory
-  when: swarm_master is defined
-  tags: [swarm]
-
-- name: Compose is present
-  shell: >
-    curl -L \
-    https://github.com/docker/compose/releases/download/1.2.0/docker-compose-`uname -s`-`uname -m` \
-    > /usr/local/bin/docker-compose
-  args:
-    creates: /usr/local/bin/docker-compose
-  when: swarm_master is defined
-  tags: [swarm]
-
-- name: Setting permissions
-  file:
-    path: /usr/local/bin/docker-compose
-    group: root
-    owner: root
-    mode: 0755
-  when: swarm_master is defined
-  tags: [swarm]
+#- name: Compose is present
+#  shell: >
+#    curl -L \
+#    https://github.com/docker/compose/releases/download/1.2.0/docker-compose-`uname -s`-`uname -m` \
+#    > /usr/local/bin/docker-compose
+#  args:
+#    creates: /usr/local/bin/docker-compose
+#  when: swarm_master is defined
+#  tags: [swarm]
+#
+#- name: Setting permissions
+#  file:
+#    path: /usr/local/bin/docker-compose
+#    group: root
+#    owner: root
+#    mode: 0755
+#  when: swarm_master is defined
+#  tags: [swarm]

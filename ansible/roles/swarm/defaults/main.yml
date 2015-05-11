@@ -1,1 +1,8 @@
 swarm_cluster_id: a1e87a8f8b369ba66b94f11fd3443e20
+master_directories:
+  - /data/scripts
+
+master_scripts: [
+  { src: "swarm_get_ip.sh", dest: "/data/scripts/swarm_get_ip.sh" },
+  { src: "deploy_blue_green.sh", dest: "/data/scripts/deploy_blue_green.sh" }
+]

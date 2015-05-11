@@ -1,0 +1,76 @@
+- name: Container is running
+  shell: >
+    /data/scripts/deploy_blue_green.sh \
+      {{ container_image }} \
+      {{ container_name }} \
+      {{ container_internal_port }} \
+      {{ container_volume }} \
+      {{ container_blue_port }} \
+      {{ container_green_port }}
+  tags: [service]
+
+- name: Port is retrieved from Consul
+  consul_kv:
+    action: get
+    key: "{{ container_name }}/port"
+  register: container_port
+  tags: [service]
+
+- name: Set port
+  set_fact:
+    container_port: "{{ container_port.value.0.Value }}"
+  tags: [service]
+
+- name: IP is retrieved from Consul
+  consul_kv:
+    action: get
+    key: "{{ container_name }}/ip"
+  register: container_ip
+  tags: [service]
+
+- name: Set IP
+  set_fact:
+    container_ip: "{{ container_ip.value.0.Value }}"
+  tags: [service]
+
+- name: Old color is retrieved from Consul
+  consul_kv:
+    action: get
+    key: "{{ container_name }}/old_color"
+  register: container_old_color
+  tags: [service]
+
+- name: Set color
+  set_fact:
+    container_old_color: "{{ container_old_color.value.0.Value }}"
+  tags: [service]
+
+- name: Consul configs are present
+  template:
+    src: consul_service.json.j2
+    dest: /etc/consul.d/service-{{ container_name }}.json
+  register: health_result
+  with_items: consul_configs
+  tags: [service]
+
+- name: Consul is restarted
+  shell: killall -HUP consul
+  when: health_result|changed
+  tags: [service]
+
+- name: nginx config files are present
+  template: src=nginx.conf.j2 dest=/data/nginx/includes/{{ container_name }}.conf
+  register: nginx_result
+  tags: [service]
+
+- name: nginx container is restarted
+  shell: docker kill -s HUP nginx
+  when: nginx_result|changed
+  tags: [service]
+
+- name: Old container is stopped
+  shell: >
+    docker -H tcp://0.0.0.0:2375 stop \
+      {{ container_name }}-{{ container_old_color }}
+  ignore_errors: yes
+  tags: [service]

@@ -1,13 +1,13 @@
 {
     "service": {
-        "name": "books-service",
-        "tags": ["service", "back-end"],
+        "name": "{{ container_name }}",
+        "tags": ["service"],
         "port": {{ container_port }},
         "address": "{{ container_ip }}",
         "checks": [{
             "id": "api",
-            "name": "HTTP API on port 80",
-            "http": "http://{{ ip }}/api/v1/books",
+            "name": "HTTP on port 80",
+            "http": "http://{{ ip }}{{ http_address }}",
             "interval": "10s",
             "interval": "1s"
         }]

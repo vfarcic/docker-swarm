@@ -96,4 +96,6 @@ TODO
 
 * Blue/green
 * Consul container
-* Add loadabg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
+* Add loadavg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
+* Add DB as a separate container
+* Stop the old container 
