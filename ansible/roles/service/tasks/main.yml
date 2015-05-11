@@ -1,3 +1,11 @@
+- name: Files from templates are present
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items: templates
+  tags: [service]
+
 - name: Container is running
   shell: >
     /data/scripts/deploy_blue_green.sh \
@@ -50,7 +58,6 @@
     src: consul_service.json.j2
     dest: /etc/consul.d/service-{{ container_name }}.json
   register: health_result
-  with_items: consul_configs
   tags: [service]
 
 - name: Consul is restarted
@@ -74,3 +81,18 @@
       {{ container_name }}-{{ container_old_color }}
   ignore_errors: yes
   tags: [service]
+
+#- name: Consul watch is started
+#  shell: >
+#    consul watch \
+#    -type=checks \
+#    -state=critical \
+#    /data/consul/scripts/redeploy_service.sh >/data/consul/watch.log
+#  register: xxx
+#  sudo: no
+#  async: 45
+#  poll: 0
+#  tags: [service]
+#
+#- debug: var=xxx
+#  tags: [service]

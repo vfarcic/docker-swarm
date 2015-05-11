@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+RED='\033[0;31m'
+NC='\033[0;0m'
+
+read -r JSON
+echo "Consul watch request:"
+echo "$JSON"
+echo "$JSON" | jq -r '.[] | select(.CheckID | contains("service:")) | .ServiceName' | while read SERVICE_NAME
+do
+  echo ""
+  echo -e ">>> ${RED}Service $SERVICE_NAME is critical${NC}"
+  echo ""
+  echo "Triggering Jenkins job..."
+
+  echo ">>> Running Ansible playbook $SERVICE_NAME.yml"
+  echo ""
+  sudo su - vagrant && ansible-playbook {{ ansible_root_dir }}/$SERVICE_NAME.yml -i {{ ansible_root_dir }}/{{ ansible_inventory }}
+  echo ""
+  echo ">>> Ansible playbook $SERVICE_NAME.yml has finished running with exit code $?"
+
+done

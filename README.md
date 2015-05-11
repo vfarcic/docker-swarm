@@ -76,19 +76,23 @@ docker -H tcp://0.0.0.0:2375 ps -a
 curl http://10.100.199.202:9000
 curl http://10.100.199.200
 
-# Check Consul
+# Consul checks
 curl http://localhost:8500/v1/health/state/critical
 curl http://localhost:8500/v1/health/state/warning
 docker -H tcp://0.0.0.0:2375 stop books-service
 curl http://localhost:8500/v1/health/state/critical
-# Switch to automatic failover
+# Open http://10.100.199.200:8500/ui/ in browser
 docker -H tcp://0.0.0.0:2375 start books-service
 curl http://localhost:8500/v1/health/state/critical
+# Open http://10.100.199.200:8500/ui/ in browser
 docker -H tcp://0.0.0.0:2375 stop books-fe
 curl http://localhost:8500/v1/health/state/critical
-# Switch to automatic failover
+# Open http://10.100.199.200:8500/ui/ in browser
 docker -H tcp://0.0.0.0:2375 start books-fe
 curl http://localhost:8500/v1/health/state/critical
+# Open http://10.100.199.200:8500/ui/ in browser
+
+
 ```
 
 TODO

@@ -5,7 +5,7 @@
   with_items: directories
   tags: [consul]
 
-- name: Files are copied
+- name: Files are present
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -13,11 +13,20 @@
   with_items: files
   tags: [consul]
 
-- name: Upstart script is present
-  template:
-    src: consul.conf.j2
-    dest: /etc/init/consul.conf
+- name: Master file is present
+  copy:
+    src: watchers.json
+    dest: /etc/consul.d/watchers.json
     mode: 0644
+  when: consul_master_ip is not defined
+  tags: [consul]
+
+- name: Files from templates are present
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items: templates
   tags: [consul]
 
 - name: Service is started
