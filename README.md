@@ -82,15 +82,19 @@ curl http://localhost:8500/v1/health/state/warning
 docker -H tcp://0.0.0.0:2375 stop books-service
 curl http://localhost:8500/v1/health/state/critical
 # Open http://10.100.199.200:8500/ui/ in browser
+# Open http://10.100.199.200:8080 in browser
 docker -H tcp://0.0.0.0:2375 start books-service
 curl http://localhost:8500/v1/health/state/critical
 # Open http://10.100.199.200:8500/ui/ in browser
+# Open http://10.100.199.200:8080 in browser
 docker -H tcp://0.0.0.0:2375 stop books-fe
 curl http://localhost:8500/v1/health/state/critical
 # Open http://10.100.199.200:8500/ui/ in browser
+# Open http://10.100.199.200:8080 in browser
 docker -H tcp://0.0.0.0:2375 start books-fe
 curl http://localhost:8500/v1/health/state/critical
 # Open http://10.100.199.200:8500/ui/ in browser
+# Open http://10.100.199.200:8080 in browser
 
 
 ```
@@ -98,8 +102,7 @@ curl http://localhost:8500/v1/health/state/critical
 TODO
 ====
 
-* Blue/green
+* Create Jenkins job templates
 * Consul container
 * Add loadavg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
 * Add DB as a separate container
-* Stop the old container 

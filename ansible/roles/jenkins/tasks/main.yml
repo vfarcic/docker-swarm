@@ -1,0 +1,27 @@
+- name: Job directories are present
+  file:
+    path: '{{ jenkins_base_dir }}/jobs/{{ item.dest }}'
+    state: directory
+  with_items: jenkins_jobs
+  tags: [jenkins]
+
+- name: Build jobs are present
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ jenkins_base_dir }}/jobs/{{ item.dest }}/config.xml'
+    backup: yes
+  with_items: jenkins_jobs
+  tags: [jenkins]
+
+- name: Container is running
+  docker:
+    name: jenkins
+    image: vfarcic/jenkins
+    ports: 8080:8080
+    volumes:
+      - "{{ jenkins_base_dir }}:/jenkins"
+  tags: [jenkins]
+
+- name: Reload
+  shell: docker restart jenkins
+  tags: [jenkins, reload]

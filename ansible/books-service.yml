@@ -5,7 +5,7 @@
     - container_image: vfarcic/books-service
     - container_name: books-service
     - container_internal_port: 8080
-    - container_volume: /data/{{ container_name }}/db:/data/db
+    - container_volume: none
     - container_blue_port: 9001
     - container_green_port: 1{{ container_blue_port }}
     - http_address: /api/v1/books

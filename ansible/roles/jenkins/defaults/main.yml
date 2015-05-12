@@ -1,0 +1,6 @@
+jenkins_base_dir: /data/jenkins
+
+jenkins_jobs: [
+  { src: "build.xml.j2", dest: "books-service", app: "books-service" },
+  { src: "build.xml.j2", dest: "books-fe", app: "books-fe" }
+]

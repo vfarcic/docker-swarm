@@ -1,0 +1,8 @@
+- hosts: jenkins
+  remote_user: vagrant
+  sudo: yes
+  roles:
+    - docker
+    - java
+    - ansible
+    - jenkins

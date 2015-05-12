@@ -1,0 +1,23 @@
+- name: Package are present
+  apt:
+    name=software-properties-common
+    state=present
+  tags: [ansible]
+
+- name: repos are present
+  apt_repository:
+    repo=ppa:ansible/ansible
+    state=present
+  register: ansible_version
+  tags: [ansible]
+
+- name: install ansible on ubutu
+  shell: apt-get update
+  when: ansible_version|changed
+  tags: [ansible]
+
+- name: Package are present
+  apt:
+    name=ansible
+    state=present
+  tags: [ansible]
