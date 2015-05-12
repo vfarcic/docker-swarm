@@ -1,23 +1,47 @@
-- name: DB directory is present
-  file:
-    dest: "{{ container_db_volume }}"
-    state: directory
-  when: container_db_volume is defined
-  tags: [service]
-
 - name: DB container is running
   shell: >
     /data/scripts/deploy.sh \
       {{ container_db_image }} \
       {{ container_db_name }} \
       {{ container_db_internal_port }} \
-      {{ container_db_volume }} \
-      {{ container_db_port }}
+      {{ container_db_port }} \
+      {{ container_db_volumes }} \
   when: container_db_image is defined
   tags: [service]
 
-#DB_PORT_27017_TCP_ADDR
-#DB_PORT_27017_TCP_PORT
+- name: DB port is retrieved from Consul
+  consul_kv:
+    action: get
+    key: "{{ container_db_name }}/port"
+  register: container_db_port
+  when: container_db_image is defined
+  tags: [service]
+
+- name: Set DB port
+  set_fact:
+    container_db_port: "{{ container_db_port.value.0.Value }}"
+  when: container_db_image is defined
+  tags: [service]
+
+- name: DB IP is retrieved from Consul
+  consul_kv:
+    action: get
+    key: "{{ container_db_name }}/ip"
+  register: container_db_ip
+  when: container_db_image is defined
+  tags: [service]
+
+- name: Set DB IP
+  set_fact:
+    container_db_ip: "{{ container_db_ip.value.0.Value }}"
+  when: container_db_image is defined
+  tags: [service]
+
+- name: Set envs
+  set_fact:
+    container_envs: '"-e DB_PORT_27017_TCP_ADDR={{ container_db_ip }} -e DB_PORT_27017_TCP_PORT={{ container_db_port }}"'
+  when: container_db_image is defined
+  tags: [service]
 
 - name: Container is running
   shell: >
@@ -25,9 +49,10 @@
       {{ container_image }} \
       {{ container_name }} \
       {{ container_internal_port }} \
-      {{ container_volume }} \
       {{ container_blue_port }} \
-      {{ container_green_port }}
+      {{ container_green_port }} \
+      {{ container_volumes }} \
+      {{ container_envs }}
   tags: [service]
 
 - name: Port is retrieved from Consul

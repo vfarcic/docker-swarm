@@ -3,9 +3,10 @@
 IMAGE=$1
 NAME=$2
 DOCKER_PORT=$3
-VOLUME=$4
-BLUE_PORT=$5
-GREEN_PORT=$6
+BLUE_PORT=$4
+GREEN_PORT=$5
+VOLUMES=$6
+ENVS=$7
 
 set -e
 
@@ -20,10 +21,12 @@ else
     COLOR=green
 fi
 
-if [[ "$VOLUME" != "none" ]]; then
-    VOLUME="-v $VOLUME"
-else
-    VOLUME=""
+if [[ "$VOLUMES" == "none" ]]; then
+    VOLUMES=""
+fi
+
+if [[ "$ENVS" == "none" ]]; then
+    ENVS=""
 fi
 
 NEW_FULL_NAME=$NAME-$NEW_COLOR
@@ -43,7 +46,8 @@ echo ">>> Starting $NEW_FULL_NAME..."
 docker -H tcp://0.0.0.0:2375 run -d \
   --name $NEW_FULL_NAME \
   -p $NEW_PORT:$DOCKER_PORT \
-  $VOLUME \
+  $VOLUMES \
+  $ENVS \
   $IMAGE
 
 echo ">> Putting new data to Consul..."

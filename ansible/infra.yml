@@ -1,0 +1,3 @@
+- include: jenkins.yml
+- include: consul.yml
+- include: swarm.yml

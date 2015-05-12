@@ -3,15 +3,13 @@
 IMAGE=$1
 NAME=$2
 DOCKER_PORT=$3
-VOLUME=$4
-PORT=$5
+PORT=$4
+VOLUMES=$5
 
 set -e
 
-if [[ "$VOLUME" != "none" ]]; then
-    VOLUME="-v $VOLUME"
-else
-    VOLUME=""
+if [[ "$VOLUMES" == "none" ]]; then
+    VOLUMES=""
 fi
 
 set +e
@@ -26,7 +24,7 @@ elif [[ -z "$QUERY" ]]; then
     docker -H tcp://0.0.0.0:2375 run -d \
         --name $NAME \
         -p $PORT:$DOCKER_PORT \
-        $VOLUME \
+        $VOLUMES \
         $IMAGE
     echo ">>> Putting new data to Consul..."
     CONTAINER_IP=$(docker -H tcp://0.0.0.0:2375 inspect --format='{{.Node.Ip}}' $NAME)

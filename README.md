@@ -60,19 +60,18 @@ ansible-playbook /vagrant/ansible/books-service.yml -i /vagrant/ansible/hosts/pr
 docker -H tcp://0.0.0.0:2375 ps -a
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 1, "title": "My First Book", "author": "John Doe", "description": "Not a very good book"}' \
-  http://10.100.199.201:9001/api/v1/books | python -mjson.tool
+  http://10.100.199.200/api/v1/books | python -mjson.tool
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 2, "title": "My Second Book", "author": "John Doe", "description": "Not a bad as the first book"}' \
-  http://10.100.199.201:9001/api/v1/books | python -mjson.tool
+  http://10.100.199.200/api/v1/books | python -mjson.tool
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 3, "title": "My Third Book", "author": "John Doe", "description": "Failed writers club"}' \
-  http://10.100.199.201:9001/api/v1/books | python -mjson.tool
-curl http://10.100.199.201:9001/api/v1/books | python -mjson.tool
+  http://10.100.199.200/api/v1/books | python -mjson.tool
 curl http://10.100.199.200/api/v1/books | python -mjson.tool
 
 # Run Books Front-End
 ansible-playbook /vagrant/ansible/books-fe.yml -i /vagrant/ansible/hosts/prod
-docker -H tcp://0.0.0.0:2375 ps -a
+docker -H tcp://0.0.0.0:2375 ps
 curl http://10.100.199.202:9000
 curl http://10.100.199.200
 
@@ -107,3 +106,6 @@ TODO
 * Add loadavg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
 * Notifications
 * Use mounted volumes
+* Consul Template
+* Compose
+* Fix PUT/POST in books-fe
