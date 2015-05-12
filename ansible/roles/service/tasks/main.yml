@@ -1,3 +1,24 @@
+- name: DB directory is present
+  file:
+    dest: "{{ container_db_volume }}"
+    state: directory
+  when: container_db_volume is defined
+  tags: [service]
+
+- name: DB container is running
+  shell: >
+    /data/scripts/deploy.sh \
+      {{ container_db_image }} \
+      {{ container_db_name }} \
+      {{ container_db_internal_port }} \
+      {{ container_db_volume }} \
+      {{ container_db_port }}
+  when: container_db_image is defined
+  tags: [service]
+
+#DB_PORT_27017_TCP_ADDR
+#DB_PORT_27017_TCP_PORT
+
 - name: Container is running
   shell: >
     /data/scripts/deploy_blue_green.sh \
@@ -7,10 +28,6 @@
       {{ container_volume }} \
       {{ container_blue_port }} \
       {{ container_green_port }}
-  tags: [service]
-
-- name: Wait a bit
-  shell: sleep 10
   tags: [service]
 
 - name: Port is retrieved from Consul

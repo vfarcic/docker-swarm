@@ -8,6 +8,12 @@
     - container_volume: none
     - container_blue_port: 9001
     - container_green_port: 1{{ container_blue_port }}
+    - container_db_image: mongo
+    - container_db_name: "{{ container_name }}-db"
+    - container_db_internal_port: 27017
+    - container_db_volume: /data/{{ container_db_name }}
+    - container_db_internal_volume: /data/db
+    - container_db_port: 2{{ container_blue_port }}
     - http_address: /api/v1/books
   roles:
     - docker

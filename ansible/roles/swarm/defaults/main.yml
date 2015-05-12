@@ -4,5 +4,6 @@ master_directories:
 
 master_scripts: [
   { src: "swarm_get_ip.sh", dest: "/data/scripts/swarm_get_ip.sh" },
+  { src: "deploy.sh", dest: "/data/scripts/deploy.sh" },
   { src: "deploy_blue_green.sh", dest: "/data/scripts/deploy_blue_green.sh" }
 ]

@@ -7,7 +7,6 @@
     - container_internal_port: 8080
     - container_volume: none
     - container_blue_port: 9000
-    - container_green_port: 1{{ container_blue_port }}
     - http_address: /
   roles:
     - docker
