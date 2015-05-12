@@ -101,7 +101,6 @@ curl http://localhost:8500/v1/health/state/critical
 TODO
 ====
 
-* Add DB as a separate container
 * Consul container
 * Add loadavg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
 * Notifications
