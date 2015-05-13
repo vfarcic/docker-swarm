@@ -54,12 +54,22 @@
   when: result|changed
   tags: [consul]
 
-#- name: Registrator is running
-#  docker:
-#    name: registrator
-#    volumes:
-#      - /var/run/docker.sock:/tmp/docker.sock
-#    hostname: "{{ hostname }}"
-#    image: gliderlabs/registrator
-#    command: consul://{{ consul_master_ip }}:8500
-#  tags: [consul]
+- name: Registrator is running
+  docker:
+    name: registrator
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    hostname: "{{ hostname }}"
+    image: gliderlabs/registrator
+    command: consul://{{ ip }}:8500
+  tags: [consul]
+
+- name: Registrator is running
+  docker:
+    name: registrator-kv
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    hostname: "{{ hostname }}"
+    image: gliderlabs/registrator
+    command: consul://{{ ip }}:8500/services
+  tags: [consul]

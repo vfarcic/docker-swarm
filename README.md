@@ -28,8 +28,8 @@ ssh-copy-id vagrant@10.100.199.201
 ssh-copy-id vagrant@10.100.199.202
 ssh-copy-id vagrant@10.100.199.203
 
-# Setup Consul
-ansible-playbook /vagrant/ansible/consul.yml -i /vagrant/ansible/hosts/prod
+# Setup Jenkins, Consul and Swarm 
+ansible-playbook /vagrant/ansible/infra.yml -i /vagrant/ansible/hosts/prod
 
 # Check Consul
 consul members
@@ -46,9 +46,6 @@ dig @127.0.0.1 -p 8600 service.books-service.service.consul SRV
 curl http://localhost:8500/v1/catalog/service/books-service
 # TODO: Move to books-service
 sudo killall -HUP consul
-
-# Setup Docker Swarm
-ansible-playbook /vagrant/ansible/swarm.yml -i /vagrant/ansible/hosts/prod
 
 # Check Docker Swarm
 docker -H tcp://0.0.0.0:2375 info
@@ -101,7 +98,6 @@ curl http://localhost:8500/v1/health/state/critical
 TODO
 ====
 
-* Try [https://github.com/gliderlabs/registrator](Registrator)
 * Consul Template
 * Add loadavg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
 * Notifications
@@ -109,11 +105,3 @@ TODO
 * Compose
 * Fix PUT/POST in books-fe
 * Rename repo
-
-
-```bash
-sudo docker run -d --name registrator \
-    -v /var/run/docker.sock:/tmp/docker.sock \
-    -h swarm-node-03 \
-    gliderlabs/registrator consul://10.100.199.200:8500
-```
