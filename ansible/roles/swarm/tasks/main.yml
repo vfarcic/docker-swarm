@@ -40,7 +40,7 @@
   docker:
     name: swarm-node
     image: swarm
-    command: join --addr={{ ip }}:2375 token://{{ swarm_cluster_id }}
+    command: join --addr={{ ansible_default_ipv4.address }}:2375 token://{{ swarm_cluster_id }}
   when: not swarm_master is defined
   tags: [swarm]
 

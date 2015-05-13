@@ -1,4 +1,3 @@
 hostname: swarm-node-01
-ip: 10.100.199.201
 consul_extra: ""
 consul_master_ip: 10.100.199.200

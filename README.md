@@ -107,3 +107,4 @@ TODO
 * Consul Template
 * Compose
 * Fix PUT/POST in books-fe
+* Rename repo
