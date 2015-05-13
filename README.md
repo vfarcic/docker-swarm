@@ -34,18 +34,6 @@ ansible-playbook /vagrant/ansible/infra.yml -i /vagrant/ansible/hosts/prod
 # Check Consul
 consul members
 curl localhost:8500/v1/catalog/nodes
-dig @127.0.0.1 -p 8600 swarm-master.node.consul
-dig @127.0.0.1 -p 8600 swarm-node-01.node.consul
-dig @127.0.0.1 -p 8600 swarm-node-02.node.consul
-dig @127.0.0.1 -p 8600 swarm-node-03.node.consul
-# TODO: Move to books-service
-dig @127.0.0.1 -p 8600 books-service.service.consul SRV
-# TODO: Move to books-service
-dig @127.0.0.1 -p 8600 service.books-service.service.consul SRV
-# TODO: Move to books-service
-curl http://localhost:8500/v1/catalog/service/books-service
-# TODO: Move to books-service
-sudo killall -HUP consul
 
 # Check Docker Swarm
 docker -H tcp://0.0.0.0:2375 info
@@ -55,6 +43,7 @@ ansible-playbook /vagrant/ansible/books-service.yml -i /vagrant/ansible/hosts/pr
 
 # Check Books Service
 docker -H tcp://0.0.0.0:2375 ps
+curl http://localhost:8500/v1/catalog/service/books-service
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 1, "title": "My First Book", "author": "John Doe", "description": "Not a very good book"}' \
   http://10.100.199.200/api/v1/books | python -mjson.tool

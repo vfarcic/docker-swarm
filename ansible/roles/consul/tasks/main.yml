@@ -13,7 +13,7 @@
   with_items: files
   tags: [consul]
 
-- name: Master file is present
+- name: Watchers are present
   copy:
     src: watchers.json
     dest: /etc/consul.d/watchers.json
@@ -46,7 +46,6 @@
     src: consul_check.json.j2
     dest: /etc/consul.d/consul_check.json
   register: result
-  with_items: consul_nodes
   tags: [consul]
 
 - name: Consul is restarted

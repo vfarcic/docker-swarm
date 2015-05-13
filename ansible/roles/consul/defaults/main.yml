@@ -15,5 +15,5 @@ files: [
 
 templates: [
   { src: "consul.conf.j2", dest: "/etc/init/consul.conf", mode: "0644" },
-  { src: "redeploy_service.sh.j2", dest: "/data/consul/scripts/redeploy_service.sh", mode: "0755" },
+  { src: "redeploy_service.sh.j2", dest: "/data/consul/scripts/redeploy_service.sh", mode: "0755" }
 ]
