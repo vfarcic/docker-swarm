@@ -57,7 +57,7 @@ docker -H tcp://0.0.0.0:2375 info
 ansible-playbook /vagrant/ansible/books-service.yml -i /vagrant/ansible/hosts/prod
 
 # Check Books Service
-docker -H tcp://0.0.0.0:2375 ps -a
+docker -H tcp://0.0.0.0:2375 ps
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 1, "title": "My First Book", "author": "John Doe", "description": "Not a very good book"}' \
   http://10.100.199.200/api/v1/books | python -mjson.tool
@@ -101,10 +101,19 @@ curl http://localhost:8500/v1/health/state/critical
 TODO
 ====
 
+* Try [https://github.com/gliderlabs/registrator](Registrator)
+* Consul Template
 * Add loadavg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
 * Notifications
 * Use mounted volumes
-* Consul Template
 * Compose
 * Fix PUT/POST in books-fe
 * Rename repo
+
+
+```bash
+sudo docker run -d --name registrator \
+    -v /var/run/docker.sock:/tmp/docker.sock \
+    -h swarm-node-03 \
+    gliderlabs/registrator consul://10.100.199.200:8500
+```

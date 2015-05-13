@@ -12,5 +12,7 @@
     - http_address: /
   roles:
     - docker
+    - consul
+    - swarm
     - nginx
     - service

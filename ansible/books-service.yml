@@ -17,5 +17,7 @@
     - http_address: /api/v1/books
   roles:
     - docker
+    - consul
+    - swarm
     - nginx
     - service

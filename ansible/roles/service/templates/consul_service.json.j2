@@ -3,11 +3,11 @@
         "name": "{{ container_name }}",
         "tags": ["service"],
         "port": 80,
-        "address": "{{ ansible_default_ipv4.address }}",
+        "address": "{{ ip }}",
         "checks": [{
             "id": "api",
             "name": "HTTP on port 80",
-            "http": "http://{{ ansible_default_ipv4.address }}{{ http_address }}",
+            "http": "http://{{ ip }}{{ http_address }}",
             "interval": "10s"
         }]
     }

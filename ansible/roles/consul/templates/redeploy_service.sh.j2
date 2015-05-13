@@ -11,6 +11,6 @@ do
   echo ""
   echo -e ">>> ${RED}Service $SERVICE_NAME is critical${NC}"
   echo ""
-  echo "Triggering Jenkins job http://{{ ansible_default_ipv4.address }}:8080/job/$SERVICE_NAME/build"
-  curl -X POST http://{{ ansible_default_ipv4.address }}:8080/job/$SERVICE_NAME/build
+  echo "Triggering Jenkins job http://{{ ip }}:8080/job/$SERVICE_NAME/build"
+  curl -X POST http://{{ ip }}:8080/job/$SERVICE_NAME/build
 done
