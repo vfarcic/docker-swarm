@@ -82,14 +82,6 @@
       -once
   tags: [service]
 
-- name: Old container is stopped
-  shell: docker-compose stop {{ container_color }}
-  args:
-    chdir: "{{ compose_config_dir }}/{{ container_name }}"
-  environment:
-    DOCKER_HOST: tcp://0.0.0.0:2375
-  tags: [service]
-
 - name: Consul configs are present
   template:
     src: consul_service.json.j2
@@ -100,4 +92,12 @@
 - name: Consul is restarted
   shell: killall -HUP consul
   when: health_result|changed
+  tags: [service]
+
+- name: Old container is stopped
+  shell: docker-compose stop {{ container_color }}
+  args:
+    chdir: "{{ compose_config_dir }}/{{ container_name }}"
+  environment:
+    DOCKER_HOST: tcp://0.0.0.0:2375
   tags: [service]
