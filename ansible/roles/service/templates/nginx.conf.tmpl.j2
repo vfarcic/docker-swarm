@@ -1,3 +1,3 @@
 location {{ http_address }} {
-  proxy_pass http://{{ '{{' }} key "services/{{ container_image }}/{{ container_name }}-{{ container_color }}" {{ '}}' }}{{ http_address }};
+  proxy_pass http://{{ '{{' }} key "services/{{ container_image }}/{{ container_name }}-{{ container_new_color }}" {{ '}}' }}{{ http_address }};
 }

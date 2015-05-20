@@ -43,7 +43,7 @@ ansible-playbook /vagrant/ansible/books-service.yml -i /vagrant/ansible/hosts/pr
 
 # Check Books Service
 docker -H tcp://0.0.0.0:2375 ps
-curl http://localhost:8500/v1/catalog/service/books-service
+curl http://localhost:8500/v1/catalog/service/books-service | jq .
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 1, "title": "My First Book", "author": "John Doe", "description": "Not a very good book"}' \
   http://10.100.199.200/api/v1/books | python -mjson.tool
@@ -59,7 +59,6 @@ curl http://10.100.199.200/api/v1/books | python -mjson.tool
 ** TODO: Continue **
 ansible-playbook /vagrant/ansible/books-fe.yml -i /vagrant/ansible/hosts/prod
 docker -H tcp://0.0.0.0:2375 ps
-curl http://10.100.199.202:9000
 curl http://10.100.199.200
 
 # Consul checks

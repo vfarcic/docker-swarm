@@ -2,17 +2,10 @@
   remote_user: vagrant
   sudo: yes
   vars:
-    - container_owner: vfarcic
     - container_image: books-service
     - container_name: books-service
-    - container_internal_port: 8080
-    - container_volumes: none
-    - container_envs: ""
-    - container_db_image: mongo
-    - container_db_name: "{{ container_name }}-db"
-    - container_db_internal_port: 27017
-    - container_db_volumes: '"-v /data/{{ container_db_name }}:/data/db"'
     - http_address: /api/v1/books
+    - has_db: true
   roles:
     - docker
     - consul

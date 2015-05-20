@@ -1,52 +1,73 @@
-- name: DB container is running
-  shell: >
-    /data/scripts/deploy.sh \
-      {{ container_db_image }} \
-      {{ container_db_name }} \
-      {{ container_db_internal_port }} \
-      {{ container_db_volumes }} \
-  when: container_db_image is defined
+- meta: flush_handlers
   tags: [service]
 
-- name: DB address is retrieved from Consul
+- name: Compose directory is present
+  file:
+    dest: "{{ compose_config_dir }}/{{ container_name }}"
+    state: directory
+  tags: [service]
+
+- name: Compose template is present
+  copy:
+    src: "{{ container_name }}.yml"
+    dest: "{{ compose_config_dir }}/{{ container_name }}/docker-compose.yml.ctmpl"
+  register: result
+  tags: [service]
+
+- include: apply-service-template.yml
+
+- name: DB container is running
+  shell: docker-compose up -d --no-recreate db
+  args:
+    chdir: "{{ compose_config_dir }}/{{ container_name }}"
+  environment:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+  when: has_db is defined
+  register: result
+  tags: [service]
+
+- include: apply-service-template.yml
+
+- name: Blue is retrieved from Consul
   consul_kv:
     action: get
-    key: "services/{{ container_db_image }}/{{ container_db_name }}"
-  register: container_db_address
-  when: container_db_image is defined
+    key: "services/{{ container_image }}/{{ container_name }}-blue"
+  register: is_blue
+  ignore_errors: yes
   tags: [service]
 
-- name: Set envs
+- name: Set new color to blue
   set_fact:
-    container_envs: '"--env DB_PORT_27017_TCP={{ container_db_address.value.0.Value }}"'
-  when: container_db_image is defined
+    container_new_color: blue
+    container_color: green
+  when: is_blue|failed
   tags: [service]
 
-- name: Container is running
-  shell: >
-    /data/scripts/deploy_blue_green.sh \
-      {{ container_owner }} \
-      {{ container_image }} \
-      {{ container_name }} \
-      {{ container_internal_port }} \
-      {{ container_volumes }} \
-      {{ container_envs }}
+- name: Set new color to green
+  set_fact:
+    container_new_color: green
+    container_color: blue
+  when: is_blue|success
+  tags: [service]
+
+- name: Container is pulled
+  shell: docker-compose pull {{ container_new_color }}
+  args:
+    chdir: "{{ compose_config_dir }}/{{ container_name }}"
+  environment:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+  tags: [service]
+
+- name: Container is up
+  shell: docker-compose up -d {{ container_new_color }}
+  args:
+    chdir: "{{ compose_config_dir }}/{{ container_name }}"
+  environment:
+    DOCKER_HOST: tcp://0.0.0.0:2375
   tags: [service]
 
 - name: Simulate testing
   shell: sleep 3
-  tags: [service]
-
-- name: Color is retrieved from Consul
-  consul_kv:
-    action: get
-    key: "services/{{ container_image }}/color"
-  register: container_color
-  tags: [service]
-
-- name: Set color
-  set_fact:
-    container_color: "{{ container_color.value.0.Value }}"
   tags: [service]
 
 - name: nginx config files are present
@@ -61,23 +82,12 @@
       -once
   tags: [service]
 
-- name: Old color is retrieved from Consul
-  consul_kv:
-    action: get
-    key: "services/{{ container_image }}/old-color"
-  register: container_old_color
-  tags: [service]
-
-- name: Set old color
-  set_fact:
-    container_old_color: "{{ container_old_color.value.0.Value }}"
-  tags: [service]
-
 - name: Old container is stopped
-  shell: >
-    docker -H tcp://0.0.0.0:2375 stop \
-      {{ container_name }}-{{ container_old_color }}
-  ignore_errors: yes
+  shell: docker-compose stop {{ container_color }}
+  args:
+    chdir: "{{ compose_config_dir }}/{{ container_name }}"
+  environment:
+    DOCKER_HOST: tcp://0.0.0.0:2375
   tags: [service]
 
 - name: Consul configs are present
@@ -91,4 +101,3 @@
   shell: killall -HUP consul
   when: health_result|changed
   tags: [service]
-

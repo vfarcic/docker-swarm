@@ -1,0 +1,3 @@
+files: [
+  { src: "docker-compose", dest_dir: "/usr/local/bin/", dest_file: "docker-compose", mode: 0755 }
+]

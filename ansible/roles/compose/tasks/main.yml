@@ -1,0 +1,13 @@
+- name: Directories are present
+  file:
+    dest: "{{ item.dest_dir }}"
+    state: directory
+  with_items: files
+  tags: [compose]
+
+- name: Files are present
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest_dir }}/{{ item.dest_file }}"
+  with_items: files
+  tags: [compose]
