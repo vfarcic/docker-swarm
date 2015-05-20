@@ -4,101 +4,73 @@
       {{ container_db_image }} \
       {{ container_db_name }} \
       {{ container_db_internal_port }} \
-      {{ container_db_port }} \
       {{ container_db_volumes }} \
   when: container_db_image is defined
   tags: [service]
 
-- name: DB port is retrieved from Consul
+- name: DB address is retrieved from Consul
   consul_kv:
     action: get
-    key: "{{ container_db_name }}/port"
-  register: container_db_port
-  when: container_db_image is defined
-  tags: [service]
-
-- name: Set DB port
-  set_fact:
-    container_db_port: "{{ container_db_port.value.0.Value }}"
-  when: container_db_image is defined
-  tags: [service]
-
-- name: DB IP is retrieved from Consul
-  consul_kv:
-    action: get
-    key: "{{ container_db_name }}/ip"
-  register: container_db_ip
-  when: container_db_image is defined
-  tags: [service]
-
-- name: Set DB IP
-  set_fact:
-    container_db_ip: "{{ container_db_ip.value.0.Value }}"
+    key: "services/{{ container_db_image }}/{{ container_db_name }}"
+  register: container_db_address
   when: container_db_image is defined
   tags: [service]
 
 - name: Set envs
   set_fact:
-    container_envs: '"-e DB_PORT_27017_TCP_ADDR={{ container_db_ip }} -e DB_PORT_27017_TCP_PORT={{ container_db_port }}"'
+    container_envs: '"--env DB_PORT_27017_TCP={{ container_db_address.value.0.Value }}"'
   when: container_db_image is defined
   tags: [service]
 
 - name: Container is running
   shell: >
     /data/scripts/deploy_blue_green.sh \
+      {{ container_owner }} \
       {{ container_image }} \
       {{ container_name }} \
       {{ container_internal_port }} \
-      {{ container_blue_port }} \
-      {{ container_green_port }} \
       {{ container_volumes }} \
       {{ container_envs }}
   tags: [service]
 
-- name: Port is retrieved from Consul
+- name: Simulate testing
+  shell: sleep 3
+  tags: [service]
+
+- name: Color is retrieved from Consul
   consul_kv:
     action: get
-    key: "{{ container_name }}/port"
-  register: container_port
+    key: "services/{{ container_image }}/color"
+  register: container_color
   tags: [service]
 
-- name: Set port
+- name: Set color
   set_fact:
-    container_port: "{{ container_port.value.0.Value }}"
+    container_color: "{{ container_color.value.0.Value }}"
   tags: [service]
 
-- name: IP is retrieved from Consul
-  consul_kv:
-    action: get
-    key: "{{ container_name }}/ip"
-  register: container_ip
+- name: nginx config files are present
+  template: src=nginx.conf.tmpl.j2 dest=/data/nginx/templates/{{ container_name }}.conf.ctmpl
   tags: [service]
 
-- name: Set IP
-  set_fact:
-    container_ip: "{{ container_ip.value.0.Value }}"
+- name: Template is applied
+  shell: >
+    consul-template \
+      -consul localhost:8500 \
+      -template "/data/nginx/templates/{{ container_name }}.conf.ctmpl:/data/nginx/includes/{{ container_name }}.conf:docker kill -s HUP nginx" \
+      -once
   tags: [service]
 
 - name: Old color is retrieved from Consul
   consul_kv:
     action: get
-    key: "{{ container_name }}/old_color"
+    key: "services/{{ container_image }}/old-color"
   register: container_old_color
   tags: [service]
 
-- name: Set color
+- name: Set old color
   set_fact:
     container_old_color: "{{ container_old_color.value.0.Value }}"
-  tags: [service]
-
-- name: nginx config files are present
-  template: src=nginx.conf.j2 dest=/data/nginx/includes/{{ container_name }}.conf
-  register: nginx_result
-  tags: [service]
-
-- name: nginx container is restarted
-  shell: docker kill -s HUP nginx
-  when: nginx_result|changed
   tags: [service]
 
 - name: Old container is stopped

@@ -23,17 +23,17 @@ exit
 ## swarm-master ##
 vagrant ssh swarm-master
 ssh-keygen
-ssh-copy-id vagrant@10.100.199.200
-ssh-copy-id vagrant@10.100.199.201
-ssh-copy-id vagrant@10.100.199.202
-ssh-copy-id vagrant@10.100.199.203
+ssh-copy-id vagrant@swarm-master # pass: vagrant
+ssh-copy-id vagrant@swarm-node-01 # pass: vagrant
+ssh-copy-id vagrant@swarm-node-02 # pass: vagrant
+ssh-copy-id vagrant@swarm-node-03 # pass: vagrant
 
 # Setup Jenkins, Consul and Swarm 
 ansible-playbook /vagrant/ansible/infra.yml -i /vagrant/ansible/hosts/prod
 
 # Check Consul
 consul members
-curl localhost:8500/v1/catalog/nodes
+curl localhost:8500/v1/catalog/nodes | jq .
 
 # Check Docker Swarm
 docker -H tcp://0.0.0.0:2375 info
@@ -56,6 +56,7 @@ curl -H 'Content-Type: application/json' -X PUT -d \
 curl http://10.100.199.200/api/v1/books | python -mjson.tool
 
 # Run Books Front-End
+** TODO: Continue **
 ansible-playbook /vagrant/ansible/books-fe.yml -i /vagrant/ansible/hosts/prod
 docker -H tcp://0.0.0.0:2375 ps
 curl http://10.100.199.202:9000
@@ -66,7 +67,7 @@ curl http://localhost:8500/v1/health/state/critical
 curl http://localhost:8500/v1/health/state/warning
 docker -H tcp://0.0.0.0:2375 stop books-service
 curl http://localhost:8500/v1/health/state/critical
-# Open http://10.100.199.200:8500/ui/ in browser
+# Open http://10.100.199.200:8500 in browser
 # Open http://10.100.199.200:8080 in browser
 docker -H tcp://0.0.0.0:2375 start books-service
 curl http://localhost:8500/v1/health/state/critical
@@ -87,8 +88,6 @@ curl http://localhost:8500/v1/health/state/critical
 TODO
 ====
 
-* Remove Consul PUT K/V
-* Consul Template
 * Add loadavg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
 * Notifications
 * Use mounted volumes

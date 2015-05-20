@@ -50,6 +50,8 @@
     image: swarm
     ports: 2375:2375
     command: manage token://{{ swarm_cluster_id }}
+    env:
+      SERVICE_ID: swarm-master
   when: swarm_master is defined
   tags: [swarm]
 

@@ -5,6 +5,7 @@ directories:
   - /data/nginx/conf.d
   - /data/nginx/includes
   - /data/nginx/logs
+  - /data/nginx/templates
 
 volumes:
   - '/data/nginx/conf.d:/etc/nginx/conf.d'

@@ -21,7 +21,7 @@
   when: consul_master_ip is not defined
   tags: [consul]
 
-- name: Files from templates are present
+- name: Templates are present
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -60,7 +60,7 @@
       - /var/run/docker.sock:/tmp/docker.sock
     hostname: "{{ hostname }}"
     image: gliderlabs/registrator
-    command: consul://{{ ip }}:8500
+    command: -ip {{ ip }} consul://{{ ip }}:8500
   tags: [consul]
 
 - name: Registrator is running
@@ -70,5 +70,5 @@
       - /var/run/docker.sock:/tmp/docker.sock
     hostname: "{{ hostname }}"
     image: gliderlabs/registrator
-    command: consul://{{ ip }}:8500/services
+    command: -ip {{ ip }} consul://{{ ip }}:8500/services
   tags: [consul]

@@ -3,8 +3,7 @@
 IMAGE=$1
 NAME=$2
 DOCKER_PORT=$3
-PORT=$4
-VOLUMES=$5
+VOLUMES=$4
 
 set -e
 
@@ -14,22 +13,22 @@ fi
 
 set +e
 
-QUERY=$(docker -H tcp://0.0.0.0:2375 ps -a | grep $NAME)
+QUERY=$(curl http://localhost:8500/v1/kv/services/${IMAGE}/${NAME})
 
-if [[ "$QUERY" == *"Exited"* ]]; then
-    echo ">>> Starting the $NAME container..."
-    docker -H tcp://0.0.0.0:2375 start $NAME
-elif [[ -z "$QUERY" ]]; then
+if [[ -z "$QUERY" ]]; then
+    echo ">>> Removing the old $NAME container..."
+    set +e
+    docker -H tcp://0.0.0.0:2375 rm -f ${NAME}
+    set -e
+    echo ">>> Pulling the $NAME container..."
+    docker -H tcp://0.0.0.0:2375 pull ${IMAGE}
     echo ">>> Running the $NAME container..."
     docker -H tcp://0.0.0.0:2375 run -d \
-        --name $NAME \
-        -p $PORT:$DOCKER_PORT \
-        $VOLUMES \
-        $IMAGE
-    echo ">>> Putting new data to Consul..."
-    CONTAINER_IP=$(docker -H tcp://0.0.0.0:2375 inspect --format='{{.Node.Ip}}' $NAME)
-    curl -X PUT -d "$CONTAINER_IP" http://localhost:8500/v1/kv/$NAME/ip
-    curl -X PUT -d "$PORT" http://localhost:8500/v1/kv/$NAME/port
+        --name ${NAME} \
+        -p ${DOCKER_PORT} \
+        --env SERVICE_ID=${NAME} \
+        ${VOLUMES} \
+        ${IMAGE}
 else
     echo ">>> The $NAME container is already running"
 fi

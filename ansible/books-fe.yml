@@ -2,13 +2,12 @@
   remote_user: vagrant
   sudo: yes
   vars:
-    - container_image: vfarcic/books-fe
+    - container_owner: vfarcic
+    - container_image: books-fe
     - container_name: books-fe
     - container_internal_port: 8080
     - container_volumes: none
-    - container_blue_port: 9000
-    - container_green_port: 19000
-    - container_envs: none
+    - container_envs: ""
     - http_address: /
   roles:
     - docker

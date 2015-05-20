@@ -20,6 +20,8 @@
     ports: 8080:8080
     volumes:
       - "{{ jenkins_base_dir }}:/jenkins"
+    env:
+      SERVICE_ID: jenkins
   tags: [jenkins]
 
 - name: Reload
