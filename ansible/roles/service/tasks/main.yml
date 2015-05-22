@@ -70,11 +70,11 @@
   shell: sleep 3
   tags: [service]
 
-- name: nginx config files are present
-  template: src=nginx.conf.tmpl.j2 dest=/data/nginx/templates/{{ container_name }}.conf.ctmpl
+- name: nginx config template is present
+  template: src=nginx.conf.ctmpl.j2 dest=/data/nginx/templates/{{ container_name }}.conf.ctmpl
   tags: [service]
 
-- name: Template is applied
+- name: nginx template is applied
   shell: >
     consul-template \
       -consul localhost:8500 \

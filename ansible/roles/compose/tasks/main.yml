@@ -9,5 +9,6 @@
   copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest_dir }}/{{ item.dest_file }}"
+    mode: "{{ item.mode }}"
   with_items: files
   tags: [compose]
