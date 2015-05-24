@@ -8,13 +8,13 @@ blue:
   ports:
     - 8080
   environment:
-    - SERVICE_ID=books-service-blue
+    - SERVICE_NAME=books-service-blue
     - DB_PORT_27017_TCP={{ key "services/mongo/books-service-db" }}
   image: vfarcic/books-service
 green:
   ports:
     - 8080
   environment:
-    - SERVICE_ID=books-service-green
+    - SERVICE_NAME=books-service-green
     - DB_PORT_27017_TCP={{ key "services/mongo/books-service-db" }}
   image: vfarcic/books-service

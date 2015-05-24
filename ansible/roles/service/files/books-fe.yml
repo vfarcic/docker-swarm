@@ -2,11 +2,11 @@ blue:
   ports:
     - 8080
   environment:
-    - SERVICE_ID=books-fe-blue
+    - SERVICE_NAME=books-fe-blue
   image: vfarcic/books-fe
 green:
   ports:
     - 8080
   environment:
-    - SERVICE_ID=books-fe-green
+    - SERVICE_NAME=books-fe-green
   image: vfarcic/books-fe

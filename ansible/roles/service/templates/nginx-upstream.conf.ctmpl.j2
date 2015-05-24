@@ -1,0 +1,5 @@
+upstream {{ container_name }} {
+    {{ '{{' }} range service "{{ container_name }}-{{ container_new_color }}" "any" {{ '}}' }}
+    server {{ '{{' }}.Address{{ '}}' }}:{{ '{{' }}.Port{{ '}}' }};
+    {{ '{{' }}end{{ '}}' }}
+}

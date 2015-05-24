@@ -36,14 +36,16 @@ consul members
 curl localhost:8500/v1/catalog/nodes | jq .
 
 # Check Docker Swarm
-docker -H tcp://0.0.0.0:2375 info
+export DOCKER_HOST=tcp://0.0.0.0:2375
+docker info
 
 # Run Books Service
 ansible-playbook /vagrant/ansible/books-service.yml -i /vagrant/ansible/hosts/prod
 
 # Check Books Service
-docker -H tcp://0.0.0.0:2375 ps
+docker ps
 curl http://localhost:8500/v1/catalog/service/books-service | jq .
+curl http://localhost:8500/v1/catalog/service/books-service-lb | jq .
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 1, "title": "My First Book", "author": "John Doe", "description": "Not a very good book"}' \
   http://10.100.199.200/api/v1/books | python -mjson.tool
@@ -81,7 +83,23 @@ curl http://localhost:8500/v1/health/state/critical
 # Open http://10.100.199.200:8500/ui/ in browser
 # Open http://10.100.199.200:8080 in browser
 
+# Scale Up
+ansible-playbook /vagrant/ansible/books-service.yml \
+  -i /vagrant/ansible/hosts/prod \
+  --tags "service" \
+  --extra-vars "service_instances=3"
+curl http://localhost:8500/v1/catalog/service/books-service-blue | jq .
+curl http://localhost:8500/v1/catalog/service/books-service-green | jq .
+cd /data/compose/config/books-service
+curl http://10.100.199.200/api/v1/books | python -mjson.tool
 
+# Scale Down
+ansible-playbook /vagrant/ansible/books-service.yml \
+  -i /vagrant/ansible/hosts/prod \
+  --tags "service" \
+  --extra-vars "service_instances=1"
+# Open http://10.100.199.200:8500/ui/ in browser
+curl http://10.100.199.200/api/v1/books | python -mjson.tool
 ```
 
 TODO

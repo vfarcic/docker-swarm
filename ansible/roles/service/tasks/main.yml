@@ -31,8 +31,15 @@
 - name: Blue is retrieved from Consul
   consul_kv:
     action: get
-    key: "services/{{ container_image }}/{{ container_name }}-blue"
-  register: is_blue
+    key: "services/{{ container_name }}/color"
+  register: container_color
+  ignore_errors: yes
+  tags: [service]
+
+- name: Set color
+  set_fact:
+    container_color: "{{ container_color.value[0].Value }}"
+  when: container_color|success
   ignore_errors: yes
   tags: [service]
 
@@ -40,14 +47,14 @@
   set_fact:
     container_new_color: blue
     container_color: green
-  when: is_blue|failed
+  when: container_color != "blue"
   tags: [service]
 
 - name: Set new color to green
   set_fact:
     container_new_color: green
     container_color: blue
-  when: is_blue|success
+  when: container_color == "blue"
   tags: [service]
 
 - name: Container is pulled
@@ -58,8 +65,24 @@
     DOCKER_HOST: tcp://0.0.0.0:2375
   tags: [service]
 
+- name: Container stopped
+  shell: docker-compose stop {{ container_new_color }}
+  args:
+    chdir: "{{ compose_config_dir }}/{{ container_name }}"
+  environment:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+  tags: [service]
+
+- name: Container removed
+  shell: docker-compose rm -f {{ container_new_color }}
+  args:
+    chdir: "{{ compose_config_dir }}/{{ container_name }}"
+  environment:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+  tags: [service]
+
 - name: Container is up
-  shell: docker-compose up -d {{ container_new_color }}
+  shell: docker-compose scale {{ container_new_color }}={{ service_instances }}
   args:
     chdir: "{{ compose_config_dir }}/{{ container_name }}"
   environment:
@@ -70,16 +93,27 @@
   shell: sleep 3
   tags: [service]
 
-- name: nginx config template is present
-  template: src=nginx.conf.ctmpl.j2 dest=/data/nginx/templates/{{ container_name }}.conf.ctmpl
+- name: Color is updated
+  consul_kv:
+    key: services/{{ container_name }}/color
+    value: "{{ container_new_color }}"
+    action: put
   tags: [service]
 
-- name: nginx template is applied
+- name: nginx Consul templates are present
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.ctmplDest }}"
+  with_items: nginx_templates
+  tags: [service]
+
+- name: nginx Consul templates are applied
   shell: >
     consul-template \
       -consul localhost:8500 \
-      -template "/data/nginx/templates/{{ container_name }}.conf.ctmpl:/data/nginx/includes/{{ container_name }}.conf:docker kill -s HUP nginx" \
+      -template "{{ item.ctmplDest }}:{{ item.dest }}:docker kill -s HUP nginx" \
       -once
+  with_items: nginx_templates
   tags: [service]
 
 - name: Consul configs are present

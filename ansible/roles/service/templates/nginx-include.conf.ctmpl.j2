@@ -1,0 +1,3 @@
+location {{ http_address }} {
+  proxy_pass http://{{ container_name }}{{ http_address }};
+}

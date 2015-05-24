@@ -63,7 +63,7 @@
     command: -ip {{ ip }} consul://{{ ip }}:8500
   tags: [consul]
 
-- name: Registrator is running
+- name: Registrator KV is running
   docker:
     name: registrator-kv
     volumes:
