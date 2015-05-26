@@ -65,7 +65,7 @@
     DOCKER_HOST: tcp://0.0.0.0:2375
   tags: [service]
 
-- name: Container stopped
+- name: Container is stopped
   shell: docker-compose stop {{ container_new_color }}
   args:
     chdir: "{{ compose_config_dir }}/{{ container_name }}"
