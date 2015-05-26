@@ -1,6 +1,17 @@
 Work in progress
 ================
 
+Prerequisites
+-------------
+
+* VirtualBox
+* Vagrant
+
+```bash
+vagrant plugin install vagrant-hosts
+vagrant plugin install vagrant-cachier
+```
+
 ```bash
 vagrant up
 vagrant provision --provision-with hosts
