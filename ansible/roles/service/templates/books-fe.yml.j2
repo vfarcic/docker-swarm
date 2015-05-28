@@ -2,11 +2,13 @@ blue:
   ports:
     - 8080
   environment:
-    - SERVICE_NAME=books-fe-blue
+    - SERVICE_NAME={{ alias }}books-fe-blue
+
   image: vfarcic/books-fe
 green:
   ports:
     - 8080
   environment:
-    - SERVICE_NAME=books-fe-green
+    - SERVICE_NAME={{ alias }}books-fe-green
+
   image: vfarcic/books-fe

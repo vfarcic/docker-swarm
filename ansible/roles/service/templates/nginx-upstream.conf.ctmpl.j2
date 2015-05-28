@@ -1,5 +1,7 @@
-upstream {{ container_name }} {
-    {{ '{{' }} range service "{{ container_name }}-{{ container_new_color }}" "any" {{ '}}' }}
-    server {{ '{{' }}.Address{{ '}}' }}:{{ '{{' }}.Port{{ '}}' }};
-    {{ '{{' }}end{{ '}}' }}
+upstream {{ alias }}{{ container_name }} {
+    {% raw %}{{{% endraw %}range service "{{ alias }}{{ container_name }}-{{ container_new_color }}" "any" {% raw %}}}{% endraw %}
+
+    server {% raw %} {{.Address}}:{{.Port}};
+    {{end}}{% endraw %}
+
 }

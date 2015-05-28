@@ -2,7 +2,7 @@
   shell: >
     consul-template \
       -consul localhost:8500 \
-      -template "{{ compose_config_dir }}/{{ container_name }}/docker-compose.yml.ctmpl:{{ compose_config_dir }}/{{ container_name }}/docker-compose.yml" \
+      -template "{{ compose_config_dir }}/{{ alias }}{{ container_name }}/docker-compose.yml.ctmpl:{{ compose_config_dir }}/{{ alias }}{{ container_name }}/docker-compose.yml" \
       -once
-  when: result|changed
+#  when: result|changed
   tags: [service]

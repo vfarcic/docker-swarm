@@ -34,10 +34,10 @@ exit
 ## swarm-master ##
 vagrant ssh swarm-master
 ssh-keygen
-ssh-copy-id vagrant@swarm-master # pass: vagrant
-ssh-copy-id vagrant@swarm-node-01 # pass: vagrant
-ssh-copy-id vagrant@swarm-node-02 # pass: vagrant
-ssh-copy-id vagrant@swarm-node-03 # pass: vagrant
+ssh-copy-id vagrant@10.100.199.200 # pass: vagrant
+ssh-copy-id vagrant@10.100.199.201 # pass: vagrant
+ssh-copy-id vagrant@10.100.199.202 # pass: vagrant
+ssh-copy-id vagrant@10.100.199.203 # pass: vagrant
 
 # Setup Jenkins, Consul and Swarm 
 ansible-playbook /vagrant/ansible/infra.yml -i /vagrant/ansible/hosts/prod
@@ -55,18 +55,17 @@ ansible-playbook /vagrant/ansible/books-service.yml -i /vagrant/ansible/hosts/pr
 
 # Check Books Service
 docker ps
-curl http://localhost:8500/v1/catalog/service/books-service | jq .
 curl http://localhost:8500/v1/catalog/service/books-service-lb | jq .
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 1, "title": "My First Book", "author": "John Doe", "description": "Not a very good book"}' \
-  http://10.100.199.200/api/v1/books | python -mjson.tool
+  http://10.100.199.200/api/v1/books | jq .
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 2, "title": "My Second Book", "author": "John Doe", "description": "Not a bad as the first book"}' \
-  http://10.100.199.200/api/v1/books | python -mjson.tool
+  http://10.100.199.200/api/v1/books | jq .
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 3, "title": "My Third Book", "author": "John Doe", "description": "Failed writers club"}' \
-  http://10.100.199.200/api/v1/books | python -mjson.tool
-curl http://10.100.199.200/api/v1/books | python -mjson.tool
+  http://10.100.199.200/api/v1/books | jq .
+curl http://10.100.199.200/api/v1/books | jq .
 
 # Run Books Front-End
 ** TODO: Continue **
@@ -102,7 +101,7 @@ ansible-playbook /vagrant/ansible/books-service.yml \
 curl http://localhost:8500/v1/catalog/service/books-service-blue | jq .
 curl http://localhost:8500/v1/catalog/service/books-service-green | jq .
 cd /data/compose/config/books-service
-curl http://10.100.199.200/api/v1/books | python -mjson.tool
+curl http://10.100.199.200/api/v1/books | jq .
 
 # Scale Down
 ansible-playbook /vagrant/ansible/books-service.yml \
@@ -110,7 +109,17 @@ ansible-playbook /vagrant/ansible/books-service.yml \
   --tags "service" \
   --extra-vars "service_instances=1"
 # Open http://10.100.199.200:8500/ui/ in browser
-curl http://10.100.199.200/api/v1/books | python -mjson.tool
+curl http://10.100.199.200/api/v1/books | jq .
+
+
+# Run Books Service for a new client
+ansible-playbook /vagrant/ansible/books-service.yml -i /vagrant/ansible/hosts/prod --extra-vars "nginx_host=acme.com nginx_conf_name=acme alias=acme host=http://acme.com"
+echo "10.100.199.200 acme.com" | sudo tee -a /etc/hosts
+curl -H 'Content-Type: application/json' -X PUT -d \
+  '{"_id": 1, "title": "ACME changed my life", "author": "ACME", "description": "To ACME or not to ACME"}' \
+  http://acme.com/api/v1/books | jq .
+curl http://acme.com/api/v1/books | jq .
+curl http://10.100.199.200/api/v1/books | jq .
 ```
 
 TODO
@@ -119,7 +128,5 @@ TODO
 * Add loadavg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
 * Notifications
 * Use mounted volumes
-* Compose
 * Fix PUT/POST in books-fe
-* Rename repo
 * Write Consul blue/green Ansible module

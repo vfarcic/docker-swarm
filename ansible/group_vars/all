@@ -1,1 +1,6 @@
 service_instances: 1
+
+host: "{{ ip }}"
+nginx_host: "{{ ip }}"
+nginx_conf_name: common
+alias: ""

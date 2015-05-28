@@ -1,13 +1,13 @@
 {
     "service": {
-        "name": "{{ container_name }}-lb",
+        "name": "{{ alias }}{{ container_name }}-lb",
         "tags": ["service"],
         "port": 80,
-        "address": "{{ ip }}",
+        "address": "{{ host }}",
         "checks": [{
             "id": "api",
             "name": "HTTP on port 80",
-            "http": "http://{{ ip }}{{ http_address }}",
+            "http": "http://{{ host }}{{ http_address }}",
             "interval": "10s"
         }]
     }

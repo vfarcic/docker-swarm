@@ -1,13 +1,13 @@
-compose_config_dir: /data/compose/config/
+compose_config_dir: /data/compose/config
 
 nginx_templates: [
   {
     src: "nginx-include.conf.ctmpl.j2",
-    ctmplDest: "/data/nginx/templates/{{ container_name }}-include.conf.ctmpl",
-    dest: "/data/nginx/includes/{{ container_name }}.conf"
+    ctmplDest: "/data/nginx/templates/{{ alias }}{{ container_name }}-include.conf.ctmpl",
+    dest: "/data/nginx/includes/{{ nginx_conf_name }}/{{ container_name }}.conf"
   }, {
     src: "nginx-upstream.conf.ctmpl.j2",
-    ctmplDest: "/data/nginx/templates/{{ container_name }}-upstream.conf.ctmpl",
-    dest: "/data/nginx/upstreams/{{ container_name }}.conf"
+    ctmplDest: "/data/nginx/templates/{{ alias }}{{ container_name }}-upstream.conf.ctmpl",
+    dest: "/data/nginx/upstreams/{{ alias }}{{ container_name }}.conf"
   }
 ]

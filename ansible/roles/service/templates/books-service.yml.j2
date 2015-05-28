@@ -1,0 +1,22 @@
+db:
+  ports:
+    - 27017
+  environment:
+    - SERVICE_ID={{ alias }}books-service-db
+  image: mongo
+blue:
+  ports:
+    - 8080
+  environment:
+    - SERVICE_NAME={{ alias }}books-service-blue
+    - DB_PORT_27017_TCP={% raw %}{{{% endraw %} key "services/mongo/{{ alias }}books-service-db" {% raw %}}}{% endraw %}
+
+  image: vfarcic/books-service
+green:
+  ports:
+    - 8080
+  environment:
+    - SERVICE_NAME={{ alias }}books-service-green
+    - DB_PORT_27017_TCP={% raw %}{{{% endraw %} key "services/mongo/{{ alias }}books-service-db" {% raw %}}}{% endraw %}
+
+  image: vfarcic/books-service

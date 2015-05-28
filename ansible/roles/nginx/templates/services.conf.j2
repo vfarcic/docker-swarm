@@ -1,7 +1,7 @@
+server {
+    return 404;
+}
+
 include upstreams/*.conf;
 
-server {
-    listen 80;
-    server_name _;
-    include includes/*.conf;
-}
+include servers/*.conf;

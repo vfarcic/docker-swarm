@@ -7,11 +7,13 @@ directories:
   - /data/nginx/logs
   - /data/nginx/upstreams
   - /data/nginx/templates
+  - /data/nginx/servers
 
 volumes:
   - /data/nginx/conf.d:/etc/nginx/conf.d
   - /data/nginx/includes:/etc/nginx/includes
   - /data/nginx/upstreams:/etc/nginx/upstreams
+  - /data/nginx/servers:/etc/nginx/servers
   - /data/nginx/logs:/var/log/nginx
 
 templates: [

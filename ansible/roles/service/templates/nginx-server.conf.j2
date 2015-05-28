@@ -1,0 +1,5 @@
+server {
+    listen 80;
+    server_name {{ nginx_host }};
+    include includes/{{ nginx_conf_name }}/*.conf;
+}
