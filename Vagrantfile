@@ -10,7 +10,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.memory = 1024
   end
   config.vm.provision :shell, path: "bootstrap.sh"
-  config.vm.provision :hosts
+  # TODO: Remove comment
+  # config.vm.provision :hosts
   config.vm.define "swarm-master" do |node|
     node.vm.hostname = "swarm-master"
     node.vm.provision :shell, path: "bootstrap_ansible.sh"

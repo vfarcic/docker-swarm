@@ -122,22 +122,22 @@
   with_items: nginx_templates
   tags: [service]
 
-#- name: Consul configs are present
-#  template:
-#    src: consul_service.json.j2
-#    dest: /etc/consul.d/service-{{ alias }}{{ container_name }}.json
-#  register: health_result
-#  tags: [service]
-#
-#- name: Consul is restarted
-#  shell: killall -HUP consul
-#  when: health_result|changed
-#  tags: [service]
-#
-#- name: Old container is stopped
-#  shell: docker-compose stop {{ container_color }}
-#  args:
-#    chdir: "{{ compose_config_dir }}/{{ alias }}{{ container_name }}"
-#  environment:
-#    DOCKER_HOST: tcp://0.0.0.0:2375
-#  tags: [service]
+- name: Consul configs are present
+  template:
+    src: consul_service.json.j2
+    dest: /etc/consul.d/service-{{ alias }}{{ container_name }}.json
+  register: health_result
+  tags: [service]
+
+- name: Consul is restarted
+  shell: killall -HUP consul
+  when: health_result|changed
+  tags: [service]
+
+- name: Old container is stopped
+  shell: docker-compose stop {{ container_color }}
+  args:
+    chdir: "{{ compose_config_dir }}/{{ alias }}{{ container_name }}"
+  environment:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+  tags: [service]

@@ -14,7 +14,7 @@ vagrant plugin install vagrant-cachier
 
 ```bash
 vagrant up
-vagrant provision --provision-with hosts
+# vagrant provision --provision-with hosts
 
 ## swarm-node-01 ##
 vagrant ssh swarm-node-01
@@ -55,7 +55,6 @@ ansible-playbook /vagrant/ansible/books-service.yml -i /vagrant/ansible/hosts/pr
 
 # Check Books Service
 docker ps
-curl http://localhost:8500/v1/catalog/service/books-service-lb | jq .
 curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 1, "title": "My First Book", "author": "John Doe", "description": "Not a very good book"}' \
   http://10.100.199.200/api/v1/books | jq .
@@ -66,6 +65,7 @@ curl -H 'Content-Type: application/json' -X PUT -d \
   '{"_id": 3, "title": "My Third Book", "author": "John Doe", "description": "Failed writers club"}' \
   http://10.100.199.200/api/v1/books | jq .
 curl http://10.100.199.200/api/v1/books | jq .
+curl http://localhost:8500/v1/catalog/service/books-service-lb | jq .
 
 # Run Books Front-End
 ** TODO: Continue **
@@ -100,6 +100,7 @@ ansible-playbook /vagrant/ansible/books-service.yml \
   --extra-vars "service_instances=3"
 curl http://localhost:8500/v1/catalog/service/books-service-blue | jq .
 curl http://localhost:8500/v1/catalog/service/books-service-green | jq .
+# TODO: Display nginx config
 cd /data/compose/config/books-service
 curl http://10.100.199.200/api/v1/books | jq .
 
@@ -125,6 +126,7 @@ curl http://10.100.199.200/api/v1/books | jq .
 TODO
 ====
 
+* Consul to Jenkins
 * Add loadavg check `cat /proc/loadavg | awk '{printf "CPU Load Average: 1m: %.2f, 5m: %.2f, 15m: %.2f\n", $1,$2,$3}'`
 * Notifications
 * Use mounted volumes
