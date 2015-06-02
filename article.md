@@ -176,8 +176,8 @@ docker ps | grep booksservice
 The output will deffer from case to case and it will look similar to the following. Docker ps command will output more information than presented below. Those that are not relevant for this article were removed.
 
 ```bash
-vfarcic/books-service:latest    10.100.199.203:32768->8080/tcp    swarm-node-03/booksservice_blue_1   
-mongo:latest                    10.100.199.201:32768->27017/tcp   swarm-node-01/booksservice_db_1
+vfarcic/books-service:latest  10.100.199.203:32768->8080/tcp   swarm-node-03/booksservice_blue_1   
+mongo:latest                  10.100.199.201:32768->27017/tcp  swarm-node-01/booksservice_db_1
 ```
 
 We can see that the application container was deployed on swarm-node-03 and is listening to the port 32768. Database, on the other hand, went to a separate node swarm-node-01 and listens to the port 32768. Let's check whether those two containers communicate with each other. When we request data from the application container (booksservice_blue_1) it will retrieve it from the database (booksservice_db_1). The books service can store and retrieve books. In order to test it we'll request service to insert few and than ask it to retrieve all store records.
@@ -267,30 +267,44 @@ We can deploy another service using the same principle. This time it will be a f
 ansible-playbook /vagrant/ansible/books-fe.yml -i /vagrant/ansible/hosts/prod
 ```
 
-TODO: Output and explanation
-
-You can see the result by opening [http://10.100.199.200](http://10.100.199.200) in your browser. It's an AngularJS UI that uses books-service to retrieve all the available books. As with books-service, you can run following to see where was the container deployed.
-
-TODO: Fix PUT in books-service
+You can see the result by opening [http://10.100.199.200](http://10.100.199.200) in your browser. It's an AngularJS UI that uses the service we deployed earlier to retrieve all the available books. As with the books-service, you can run following to see where was the container deployed.
 
 ```bash
 docker ps | grep booksfe
 curl http://localhost:8500/v1/catalog/service/books-fe-blue | jq .
 ```
 
-Now let us imagine that someone changed the code of books-service and we want to deploy a new release. The procedure is exactly the same.
+The output of both commands should be similar to the following.
+
+```
+vfarcic/books-fe:latest         10.100.199.201:32769->8080/tcp    swarm-node-01/booksfe_blue_1
+
+[
+  {
+    "Node": "swarm-node-01",
+    "Address": "10.100.199.201",
+    "ServiceID": "swarm-node-01:booksfe_blue_1:8080",
+    "ServiceName": "books-fe-blue",
+    "ServiceTags": null,
+    "ServiceAddress": "",
+    "ServicePort": 32769
+  }
+]
+```
+
+Now let us imagine that someone changed the code of the books-service and that we want to deploy a new release. The procedure is exactly the same as we did before.
 
 ```bash
 ansible-playbook /vagrant/ansible/books-service.yml -i /vagrant/ansible/hosts/prod
 ```
 
-To verify that everything went as expected we can query Consul.
+To verify that everything went as expected we query Consul.
 
 ```bash
 curl http://localhost:8500/v1/catalog/service/books-service-green | jq .
 ```
 
-While blue release was on IP 10.100.199.203, this time the container was deployed to 10.100.199.202. Docker swarm checked which server had the least number of containers running and decided that the best place to run the contained is swarm-node-02.
+While blue release was on IP 10.100.199.203, this time the container was deployed to 10.100.199.202. Docker Swarm checked which server had the least number of containers running and decided that the best place to run the container is swarm-node-02.
 
 ```
 [
@@ -306,20 +320,31 @@ While blue release was on IP 10.100.199.203, this time the container was deploye
 ]
 ```
 
+You might have guess that, at the beginning, it's easy to know whether we deployed blue or green. However, we'll loose track very fast with increased number of deployments and services. We can solve this by querying Consul keys.
+
+```bash
+curl http://localhost:8500/v1/kv/services/books-service/color | jq .
+```
+
+TODO: Change the command to decrypted or raw data data.
+TODO: Display the output
+
 Jenkins
 =======
 
-The only thing missing for fully [continuous deployment](TODO) is to have something that will detect changes to our source code repository, build, test and deploy containers. With Docker it's very easy to standardize and have all builds, testing and deployments follow the same standard. Please read [TODO](TODO) for more information on this subject. For this article, I created only jobs that do the actual deployment. We'll use them later in the next article when we explore ways to recuperate from failure. Until then, you can take a look at the running Jenkins instance by opening [http://10.100.199.200:8080/](http://10.100.199.200:8080/).  
+The only thing missing for fully [Continuous Deployment](TODO) is to have something that will detect changes to our source code repository, build, test and deploy containers. With Docker it's very easy to standardize and have all builds, testing and deployments follow the same standard. Please read [TODO](TODO) for more information on this subject. For this article, I created only jobs that do the actual deployment. We'll use them later in the next article when we explore ways to recuperate from failure. Until then, you can take a look at the running Jenkins instance by opening [http://10.100.199.200:8080/](http://10.100.199.200:8080/).  
 
 
 To Be Continued
 ===============
 
-In the next article we're exploring additional features of Consul and how we can utilize them to recuperate from failures. Whenever some container stops working, Consul will detect it and send a notification to Jenkins which, in turn, will redeploy the failed container and send an email notification.
+In the next article we're exploring additional features of Consul and how we can utilize them to recuperate from failures. Whenever some container stops working, Consul will detect it and send a notification to Jenkins which, in turn, will redeploy the failed container and send an email notification to whomever might be interested.
 
-From there on we'll explore how we could host multiple versions of the same applications and facilitate deployments to multiple customers.
+From there on we'll explore how we could host multiple versions of same applications and facilitate deployments to multiple customers.
 
-Finally, I'll go in depth how was all this accomplished and show you manual commands with Docker Compose, Consul-Template, Registrator, etc. It is required to understand those commands in order to reach the final outcome in form of Ansible playbooks that we saw earlier. You got the taste of **what** and now it's time to understand **how**.
+Finally, we'll go in depth how all this was accomplished and show manual commands with Docker Compose, Consul-Template, Registrator, etc. Their understanding is a prerequisites for explanation of Ansible playbooks that we saw (and run) earlier.
+
+You got the taste of **what** and now it's time to understand **how**.
 
 TODO
 ====
@@ -332,3 +357,4 @@ TODO
 * Jenkins failure recuperation; redeployment and notifications
 * Manual commands
 * Ansible explained
+* Fix PUT in books-service
