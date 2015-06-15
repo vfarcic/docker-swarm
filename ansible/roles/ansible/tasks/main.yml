@@ -1,4 +1,4 @@
-- name: Package are present
+- name: Package is present
   apt:
     name=software-properties-common
     state=present
@@ -16,7 +16,7 @@
   when: ansible_version|changed
   tags: [ansible]
 
-- name: Package are present
+- name: Package is present
   apt:
     name=ansible
     state=present

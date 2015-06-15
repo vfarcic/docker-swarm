@@ -1,3 +1,4 @@
+ansible_ssh_private_key_file: /vagrant/.vagrant/machines/swarm-node-02/virtualbox/private_key
 hostname: swarm-node-02
 ip: 10.100.199.202
 consul_extra: ""

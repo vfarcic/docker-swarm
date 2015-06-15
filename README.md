@@ -8,13 +8,11 @@ Prerequisites
 * Vagrant
 
 ```bash
-vagrant plugin install vagrant-hosts
 vagrant plugin install vagrant-cachier
 ```
 
 ```bash
 vagrant up
-# vagrant provision --provision-with hosts
 
 ## swarm-node-01 ##
 vagrant ssh swarm-node-01
@@ -68,11 +66,11 @@ curl http://10.100.199.200/api/v1/books | jq .
 curl http://localhost:8500/v1/catalog/service/books-service-lb | jq .
 
 # Run Books Front-End
-** TODO: Continue **
 ansible-playbook /vagrant/ansible/books-fe.yml -i /vagrant/ansible/hosts/prod
 docker -H tcp://0.0.0.0:2375 ps
 curl http://10.100.199.200
 
+** TODO: Continue **
 # Consul checks
 curl http://localhost:8500/v1/health/state/critical
 curl http://localhost:8500/v1/health/state/warning
