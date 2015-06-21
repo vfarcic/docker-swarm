@@ -28,7 +28,7 @@
 
 - include: apply-service-template.yml
 
-- name: Blue is retrieved from Consul
+- name: Color is retrieved from Consul
   consul_kv:
     action: get
     key: "services/{{ alias }}{{ container_name }}/color"

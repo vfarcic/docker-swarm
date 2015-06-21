@@ -1,5 +1,5 @@
-Scaling Containers with Docker Swarm, Docker Compose and Consul - Part 1
-========================================================================
+Scaling Containers with Docker Swarm, Docker Compose and Consul (Part 1/3) - A Taste of What Is To Come
+=======================================================================================================
 
 Previous articles put a lot a focus on **[Continuous Delivery](http://technologyconversations.com/category/continuous-integration-delivery-and-deployment/)** and **[Containers with Docker](http://technologyconversations.com/category/docker/)**. In **[Continuous Integration, Delivery or Deployment with Jenkins, Docker and Ansible](http://technologyconversations.com/2015/02/11/continuous-integration-delivery-or-deployment-with-jenkins-docker-and-ansible/)** I explained how to continuously build, test and deploy micro services packaged into containers and do that across multiple servers, without downtime and with the ability to rollback. We used Ansible, Docker, Jenkins and few other tools to accomplish that goal.
 
@@ -344,3 +344,5 @@ From there on we'll explore how we could host multiple versions of same applicat
 Finally, we'll go in depth how all this was accomplished and show manual commands with Docker Compose, Consul-Template, Registrator, etc. Their understanding is a prerequisites for explanation of Ansible playbooks that we saw (and run) earlier.
 
 You got the taste of **what** and now it's time to understand **how**.
+
+TODO: Link to the next article
