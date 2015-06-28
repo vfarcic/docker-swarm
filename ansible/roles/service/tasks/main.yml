@@ -73,7 +73,7 @@
     DOCKER_HOST: tcp://0.0.0.0:2375
   tags: [service]
 
-- name: Container removed
+- name: Container is removed
   shell: docker-compose rm -f {{ container_new_color }}
   args:
     chdir: "{{ compose_config_dir }}/{{ alias }}{{ container_name }}"
@@ -90,7 +90,7 @@
   tags: [service]
 
 - name: Simulate testing
-  shell: sleep 3
+  shell: sleep 15
   tags: [service]
 
 - name: Color is updated

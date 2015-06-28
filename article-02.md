@@ -1,5 +1,7 @@
-Scaling Containers with Docker Swarm, Docker Compose and Consul (Part 2/3) - Manually Deploying First Instance
+Scaling Containers with Docker Swarm, Docker Compose and Consul (Part 2/4) - Manually Deploying First Instance
 ==============================================================================================================
+
+TODO: Links to all articles
 
 The previous article (TODO: Link) showed how scaling across the server farm looks like. We'll continue where we left and explore details behind the presented implementation. Orchestration has been done through [Ansible](http://www.ansible.com/home). Besides details behind tasks in Ansible playbooks, we'll see how the same result could be accomplished using manual commands in case you might prefer a different orchestration/deployment framework.
 
@@ -305,11 +307,11 @@ The last curl command should output three books that we inserted previously.
 To Be Continued
 ===============
 
-We managed to manuall deploy one database and one REST API service. Both of them were not deployed to a server we specified in advance but to the one that had least number of containers running.
+We managed to manually deploy one database and one REST API service. Both of them were not deployed to a server we specified in advance but to the one that had least number of containers running.
  
 We still have a lot of ground to cover. Next release of our service should do few more steps that we did not do yet. Without those additional steps we would not have blue/green deployment and there would be some downtime every time we release a new version.
  
-There are additinal benefits we can squeeze from Consul like health checking that will, together with Jenkins, redeploy our services whenever something goes wrong.
+There are additional benefits we can squeeze from Consul like health checking that will, together with Jenkins, redeploy our services whenever something goes wrong.
 
 Further more, we might want to have an option not only to scale different services but also to scale the same service across multiple servers.
 

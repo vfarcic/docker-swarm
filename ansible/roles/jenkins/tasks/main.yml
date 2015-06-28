@@ -1,3 +1,10 @@
+- name: Node directory is present
+  file:
+    path: /data/jenkins/slaves/cd
+    state: directory
+    mode: 0777
+  tags: [jenkins]
+
 - name: Job directories are present
   file:
     path: '{{ jenkins_base_dir }}/jobs/{{ item.dest }}'
