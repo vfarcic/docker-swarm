@@ -1,7 +1,11 @@
-Scaling Containers with Docker Swarm, Docker Compose and Consul (Part 4/4) - Scaling Services and Clients
+Scaling To Infinity with Docker Swarm, Docker Compose and Consul (Part 4/4) - Scaling Individual Services
 =========================================================================================================
 
 TODO: Links to all articles
+* A Taste of What Is To Come
+* Manually Deploying First Instance
+* Automation with Ansible and Jenkins and Self-Healing Procedure
+* Scaling Individual Services
 
 In the previous article (TODO: Link) we switched from manual deployment to automatic one with Jenkins and Ansible. In the quest for **zero-downtime** we employed Consul to check **health** of our services and initiate deployment through Jenkins is one of them fails.
 
@@ -122,3 +126,6 @@ We covered a lot of ground in these four articles (TODO: Links) and left even mo
 I'd like to hear from you what would be the next subject to explore or which parts of these articles require more details.
 
 If you have any trouble following these examples, please let me know and I'll give my best to help you out.
+
+
+TODO: memory, cpu and HD in Consul

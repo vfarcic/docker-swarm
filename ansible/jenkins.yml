@@ -4,5 +4,4 @@
   roles:
     - docker
     - java
-    - ansible
     - jenkins

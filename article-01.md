@@ -1,17 +1,23 @@
-Scaling Containers with Docker Swarm, Docker Compose and Consul (Part 1/4) - A Taste of What Is To Come
-=======================================================================================================
+Scaling To Infinity with Docker Swarm, Docker Compose and Consul (Part 1/4) - A Taste of What Is To Come
+========================================================================================================
 
 TODO: Links to all articles
+* A Taste of What Is To Come
+* Manually Deploying First Instance
+* Automation with Ansible and Jenkins and Self-Healing Procedure
+* Scaling Individual Services
 
 Previous articles put a lot a focus on **[Continuous Delivery](http://technologyconversations.com/category/continuous-integration-delivery-and-deployment/)** and **[Containers with Docker](http://technologyconversations.com/category/docker/)**. In **[Continuous Integration, Delivery or Deployment with Jenkins, Docker and Ansible](http://technologyconversations.com/2015/02/11/continuous-integration-delivery-or-deployment-with-jenkins-docker-and-ansible/)** I explained how to continuously build, test and deploy micro services packaged into containers and do that across multiple servers, without downtime and with the ability to rollback. We used Ansible, Docker, Jenkins and few other tools to accomplish that goal.
 
-Now it's time to extend what we did in previous articles and scale services across any number of servers. We'll treat all servers as one **server farm** and deploy containers not to predefined locations but to those that have the least number of containers running. Instead of thinking about each server as an individual place where we deploy, we'll treat all of them as one unit. We'll continue using some of the same tools we used before.
+Now it's time to extend what we did in previous articles and scale services across any number of servers. We'll treat all servers as one **server farm** and deploy containers not to predefined locations but to those that have the least number of containers running. Instead of thinking about each server as an individual place where we deploy, we'll treat all of them as one unit.
+
+We'll continue using some of the same tools we used before.
 
 * **[Vagrant](https://www.vagrantup.com/)** with **[VirtualBox](https://www.virtualbox.org/)** will provide an easy way to create and configure lightweight, reproducible, and portable virtual machines that will act as our servers.
 * **[Docker](https://www.docker.com/)** will provide an easy way to build, ship, and run distributed applications packaged in containers.
 * **[Ansible](http://www.ansible.com/home)** will be used to setup servers and deploy applications.
 * We'll use **[Jenkins](https://jenkins-ci.org/)** to detect changes to our code repositories and trigger jobs that will test, build and deploy applications.
-* Finally, [nginx](http://nginx.org/) will provide proxy orchestration for different server and ports our micro services will run on.
+* Finally, [nginx](http://nginx.org/) will provide proxy to different servers and ports our micro services will run on.
 
 On top of those we'll see some new ones like following.
 
@@ -19,7 +25,7 @@ On top of those we'll see some new ones like following.
 * **[Docker Swarm](https://docs.docker.com/swarm/)** will turn a pool of servers into a single, virtual host.
 * Finally, we'll use **[Consul](https://www.consul.io/)** for service discovery and configuration.
 
-In order to follow this article, set up VirtualBox and Vagrant. Once done, please install vagrant-cachier plugin. While it's not mandatory, it will speed up VM creation and installations.
+In order to follow this article, set up **[Vagrant](https://www.vagrantup.com/)** with **[VirtualBox](https://www.virtualbox.org/)**. Once done, please install vagrant-cachier plugin. While it's not mandatory, it will speed up VM creation and installations.
  
 ```bash
 vagrant plugin install vagrant-cachier

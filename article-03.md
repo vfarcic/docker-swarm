@@ -1,7 +1,11 @@
-Scaling Containers with Docker Swarm, Docker Compose and Consul (Part 3/4) - Automation with Ansible and Jenkins and Self-Healing procedure
-===========================================================================================================================================
+Scaling To Infinity with Docker Swarm, Docker Compose and Consul (Part 3/4) - Automation with Ansible and Jenkins and Self-Healing Procedure
+============================================================================================================================================
 
 TODO: Links to all articles
+* A Taste of What Is To Come
+* Manually Deploying First Instance
+* Automation with Ansible and Jenkins and Self-Healing Procedure
+* Scaling Individual Services
 
 In the previous article (TODO: Link) we manually deployed the first version of our service together with a separate instance of the Mongo DB container. Both are running on different servers. Docker Swarm decided where to run our containers and Consul stored information about service IPs and ports as well as other useful information. That data was used to link one service with another as well as to provide information nginx needed to create proxy.
 

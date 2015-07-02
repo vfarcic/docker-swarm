@@ -1,7 +1,11 @@
-Scaling Containers with Docker Swarm, Docker Compose and Consul (Part 2/4) - Manually Deploying First Instance
-==============================================================================================================
+Scaling To Infinity with Docker Swarm, Docker Compose and Consul (Part 2/4) - Manually Deploying Services
+=========================================================================================================
 
 TODO: Links to all articles
+* A Taste of What Is To Come
+* Manually Deploying First Instance
+* Automation with Ansible and Jenkins and Self-Healing Procedure
+* Scaling Individual Services
 
 The previous article (TODO: Link) showed how scaling across the server farm looks like. We'll continue where we left and explore details behind the presented implementation. Orchestration has been done through [Ansible](http://www.ansible.com/home). Besides details behind tasks in Ansible playbooks, we'll see how the same result could be accomplished using manual commands in case you might prefer a different orchestration/deployment framework.
 

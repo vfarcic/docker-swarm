@@ -1,4 +1,4 @@
-- hosts: consul
+- hosts: nginx
   serial: 1
   remote_user: vagrant
   sudo: yes

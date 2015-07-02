@@ -16,6 +16,15 @@
 
 - include: apply-service-template.yml
 
+- name: DB container is pulled
+  shell: docker-compose pull db
+  args:
+    chdir: "{{ compose_config_dir }}/{{ alias }}{{ container_name }}"
+  environment:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+  when: has_db is defined
+  tags: [service]
+
 - name: DB container is running
   shell: docker-compose up -d --no-recreate db
   args:
@@ -92,6 +101,8 @@
 - name: Simulate testing
   shell: sleep 15
   tags: [service]
+
+- debug: var=services/{{ alias }}{{ container_name }}/color
 
 - name: Color is updated
   consul_kv:
