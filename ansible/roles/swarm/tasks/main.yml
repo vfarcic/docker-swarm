@@ -40,7 +40,7 @@
   docker:
     name: swarm-node
     image: swarm
-    command: join --addr={{ ip }}:2375 token://{{ swarm_cluster_id }}
+    command: join --addr={{ ip }}:2375 consul://{{ ip }}:8500/swarm
   when: not swarm_master is defined
   tags: [swarm]
 
@@ -49,7 +49,7 @@
     name: swarm-master
     image: swarm
     ports: 2375:2375
-    command: manage token://{{ swarm_cluster_id }}
+    command: manage consul://{{ ip }}:8500/swarm
     env:
       SERVICE_ID: swarm-master
   when: swarm_master is defined

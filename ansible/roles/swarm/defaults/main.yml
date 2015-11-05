@@ -1,4 +1,3 @@
-swarm_cluster_id: a1e87a8f8b369ba66b94f11fd3443e20
 master_directories:
   - /data/scripts
 
