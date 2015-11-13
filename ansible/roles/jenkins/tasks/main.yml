@@ -23,7 +23,7 @@
 - name: Container is running
   docker:
     name: jenkins
-    image: vfarcic/jenkins
+    image: jenkins
     ports: 8080:8080
     volumes:
       - "{{ jenkins_base_dir }}:/jenkins"
