@@ -8,6 +8,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder ".", "/vagrant"
   config.vm.provider "virtualbox" do |v|
     v.memory = 1024
+    v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
   end
   config.vm.provision :shell, path: "bootstrap.sh"
   config.vm.define "swarm-master" do |node|
