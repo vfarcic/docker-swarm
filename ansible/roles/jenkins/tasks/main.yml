@@ -26,7 +26,7 @@
     image: jenkins
     ports: 8080:8080
     volumes:
-      - "{{ jenkins_base_dir }}:/jenkins"
+      - "{{ jenkins_base_dir }}:/var/jenkins_home"
     env:
       SERVICE_ID: jenkins
   tags: [jenkins]
