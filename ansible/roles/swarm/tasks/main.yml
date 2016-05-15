@@ -31,8 +31,8 @@
 
 - name: Service is restarted
   service:
-    name=docker
-    state=restarted
+    name: docker
+    state: restarted
   when: config_result|changed
   tags: [swarm]
 
@@ -40,7 +40,7 @@
   docker:
     name: swarm-node
     image: swarm
-    command: join --addr={{ ip }}:2375 consul://{{ ip }}:8500/swarm
+    command: join --advertise={{ ip }}:2375 consul://{{ ip }}:8500/swarm
   when: not swarm_master is defined
   tags: [swarm]
 
