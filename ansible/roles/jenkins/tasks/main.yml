@@ -2,13 +2,28 @@
   file:
     path: /data/jenkins/slaves/cd
     state: directory
+    owner: 1000 # uid=1000, mapping to user 'jenkins' inside the jenkins container
+    group: 1000 # gid=1000, mapping to group 'jenkins' inside the jenkins container
     mode: 0777
+  tags: [jenkins]
+
+- name: Jenkins job base directories are present
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: 1000 # uid=1000, mapping to user 'jenkins' inside the jenkins container
+    group: 1000 # gid=1000, mapping to group 'jenkins' inside the jenkins container
+  with_items:
+    - "{{ jenkins_base_dir }}"
+    - "{{ jenkins_base_dir }}/jobs"
   tags: [jenkins]
 
 - name: Job directories are present
   file:
     path: '{{ jenkins_base_dir }}/jobs/{{ item.dest }}'
     state: directory
+    owner: 1000 # uid=1000, mapping to user 'jenkins' inside the jenkins container
+    group: 1000 # gid=1000, mapping to group 'jenkins' inside the jenkins container
   with_items: jenkins_jobs
   tags: [jenkins]
 
@@ -16,6 +31,8 @@
   template:
     src: '{{ item.src }}'
     dest: '{{ jenkins_base_dir }}/jobs/{{ item.dest }}/config.xml'
+    owner: 1000 # uid=1000, mapping to user 'jenkins' inside the jenkins container
+    group: 1000 # gid=1000, mapping to group 'jenkins' inside the jenkins container
     backup: yes
   with_items: jenkins_jobs
   tags: [jenkins]
